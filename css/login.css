@@ -1,0 +1,175 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    text-align: center;
+}
+
+.login-header .logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-decoration: none;
+}
+
+.login-header .logo span {
+    color: #e74c3c;
+}
+
+.login-header h1 {
+    margin: 20px 0 10px;
+    color: #2c3e50;
+}
+
+.login-header p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+.login-form {
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.phone-input {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.phone-input select {
+    padding: 12px 15px;
+    border: none;
+    background: #f9f9f9;
+    border-right: 1px solid #ddd;
+    outline: none;
+}
+
+.phone-input input {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    outline: none;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+}
+
+.login-btn:hover {
+    background: #c0392b;
+}
+
+.login-footer {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.login-footer a {
+    color: #e74c3c;
+    text-decoration: none;
+}
+
+.otp-verification {
+    margin-top: 30px;
+}
+
+.otp-verification h2 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+.otp-verification p {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+#displayPhone {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.otp-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.otp-inputs input {
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    outline: none;
+}
+
+.verify-btn {
+    width: 100%;
+    padding: 12px;
+    background: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.verify-btn:hover {
+    background: #27ae60;
+}
+
+.resend {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #7f8c8d;
+}
+
+.resend a {
+    color: #e74c3c;
+    text-decoration: none;
+}

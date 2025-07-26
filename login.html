@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Chauffeur - MOPILA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="css/login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <a href="index.html" class="logo">MOPI<span>LA</span></a>
+            <h1>Espace Chauffeur</h1>
+            <p>Connectez-vous avec votre numéro de téléphone</p>
+        </div>
+        
+        <form id="loginForm" class="login-form">
+            <div class="form-group">
+                <label for="phone">Numéro de téléphone</label>
+                <div class="phone-input">
+                    <select id="countryCode">
+                        <option value="+242">+242 (CG)</option>
+                        <option value="+33">+33 (FR)</option>
+                        <option value="+1">+1 (US)</option>
+                    </select>
+                    <input type="tel" id="phone" placeholder="Ex: 061234567" required>
+                </div>
+            </div>
+            
+            <button type="submit" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+            
+            <div class="login-footer">
+                <p>En continuant, vous acceptez nos <a href="#">Conditions d'utilisation</a> et <a href="#">Politique de confidentialité</a></p>
+            </div>
+        </form>
+        
+        <div class="otp-verification" id="otpSection" style="display: none;">
+            <h2>Vérification OTP</h2>
+            <p>Nous avons envoyé un code à 6 chiffres au <span id="displayPhone"></span></p>
+            
+            <div class="otp-inputs">
+                <input type="text" maxlength="1" pattern="\d" required>
+                <input type="text" maxlength="1" pattern="\d" required>
+                <input type="text" maxlength="1" pattern="\d" required>
+                <input type="text" maxlength="1" pattern="\d" required>
+                <input type="text" maxlength="1" pattern="\d" required>
+                <input type="text" maxlength="1" pattern="\d" required>
+            </div>
+            
+            <button class="verify-btn" id="verifyBtn">Vérifier</button>
+            <p class="resend">Vous n'avez pas reçu de code? <a href="#" id="resendOtp">Renvoyer</a></p>
+        </div>
+    </div>
+
+    <script src="js/login.js"></script>
+</body>
+</html>
