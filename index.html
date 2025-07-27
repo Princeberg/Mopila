@@ -16,22 +16,30 @@
         <div class="logo-container">
             <img src="src/mopila-logo.png" alt="MOPILA Logo" class="logo-img">
         </div>
+       <a href="demande.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+    <button class="driver-space-btn">
+        <i class="fas fa-car"></i> Devenir MOPILA
+    </button>
+</a>
+
+        <a href="login.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
         <button class="driver-space-btn">
-            <i class="fas fa-user-shield"></i> Espace Chauffeur
+            <i class="fas fa-user-shield"></i> Espace MOPILA
         </button>
+    </a>
     </header>
 
     <section class="hero">
         <div class="hero-content">
-            <h1 class="fade-in">Trouvez votre chauffeur à Brazzaville et Pointe-Noire</h1>
+            <h1 class="fade-in">Trouvez votre MOPILA à Brazzaville et Pointe-Noire</h1>
             <p class="fade-in delay-1">Service rapide, fiable et sécurisé en moins de 5 minutes</p>
         </div>
     </section>
 
     <div class="filter-section fade-in delay-3">
-  <h3 class="filter-title">Filtrer par quartier</h3>
+  <h3 class="filter-title"> MOPILA par Zone </h3>
   <div class="filter-scroll">
-    <div class="filter-buttons">
+    <div class="filter-buttons" style="margin-top: 10px;">
       <button class="filter-btn active" data-zone="all">Tous</button>
       <button class="filter-btn" data-zone="Disponible">Disponible</button>
       <button class="filter-btn" data-zone="Bacongo">Bacongo</button>
@@ -45,7 +53,7 @@
       <button class="filter-btn" data-zone="Djiri">Djiri</button>
       <button class="filter-btn" data-zone="Lumumba">Lumumba</button>
       <button class="filter-btn" data-zone="Mvou-Mvou">Mvou-Mvou</button>
-      <button class="filter-btn" data-zone="Agostinot Netto">Agostinot Netto</button>
+      <button class="filter-btn" data-zone="Agostinho Neto">Agostinho Neto</button>
       <button class="filter-btn" data-zone="Tié-Tié">Tié-Tié</button>
       <button class="filter-btn" data-zone="Loandjili">Loandjili</button>
       <button class="filter-btn" data-zone="Mongo-Mpoukou">Mongo-Mpoukou</button>
@@ -60,9 +68,7 @@
 
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <!-- Chauffeur 1 -->
-                    <div class="swiper-slide">
-                        
+                    <div class="swiper-slide">  
                         </div>
                     </div>
                 </div>
@@ -106,7 +112,7 @@
     </section>
 
 
-      <section class="product-section">
+      <!-- <section class="product-section">
   <div class="container">
     <div class="row" id="product-list">
     </div>
@@ -116,7 +122,7 @@
   </a>
 </div>
   </div>
-</section>
+</section> -->
 
 
     <section id="contact" class="contact-section">
@@ -149,7 +155,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-logo">
-                    <img src="src/mopila-logo.png" alt="MOPILA Logo" style="height: 200px;">
+                    <img src="src/mopila-logo.png" alt="MOPILA Logo" style="height: 100px;">
                     <p>MOPILA révolutionne les déplacements à Brazzaville et Pointe-Noire en connectant les utilisateurs à des chauffeurs professionnels en moins de 5 minutes.</p>
                 </div>
             </div>
@@ -161,9 +167,11 @@
 
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+   <script src="https://unpkg.com/imagekit-javascript@1.8.5/dist/imagekit.min.js"></script>
     <script src="Api/supabase.js" ></script>
     <script src="js/display.js" ></script>
-    <script src="js/sombateka.js" ></script>
+    <script src="js/filtre.js" ></script>
+    <!-- <script src="js/sombateka.js" ></script> -->
     
 
    <script>

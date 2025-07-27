@@ -3,545 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOPILA - Espace Chauffeur</title>
+    <title>MOPILA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="src/mopila-logo.png">  
+    <link rel="stylesheet" href="css/driver.css">
     <style>
-        :root {
-            --primary: #2c3e50;
-            --secondary: #e74c3c;
-            --accent: #f39c12;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: #f5f5f5;
-            color: var(--dark);
-        }
-        
-        header {
-            background-color: var(--primary);
-            color: white;
-            padding: 1rem 2rem;
+        /* Styles supplémentaires pour les nouvelles fonctionnalités */
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
-        }
-        
-        .logo span {
-            color: var(--accent);
-        }
-        
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .user-menu img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-        
-        .driver-dashboard {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-        }
-        
-        .driver-profile {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        .driver-avatar {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 1rem;
-            border: 5px solid var(--light);
-        }
-        
-        .driver-name {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-        
-        .driver-rating {
-            color: var(--accent);
-            margin-bottom: 1.5rem;
-        }
-        
-        .status-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-        
-        .toggle-btn {
-            position: relative;
-            display: inline-block;
-            width: 80px;
-            height: 34px;
-        }
-        
-        .toggle-btn input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 26px;
-            width: 26px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .slider {
-            background-color: var(--success);
-        }
-        
-        input:checked + .slider:before {
-            transform: translateX(46px);
-        }
-        
-        .status-label {
-            margin-left: 1rem;
-            font-weight: 600;
-        }
-        
-        .status-available {
-            color: var(--success);
-        }
-        
-        .status-unavailable {
-            color: var(--danger);
-        }
-        
-        .driver-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-card {
-            background: var(--light);
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
+            gap: 10px;
+            margin-top: 20px;
         }
         
         .btn {
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            padding: 10px 15px;
             border: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-        
-        .btn-edit {
-            background-color: var(--accent);
-            color: white;
-        }
-        
-        .btn-delete {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .btn:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-        
-        .driver-content {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .section-title {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary);
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--light);
-        }
-        
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-        
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-        
-        .areas-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .area-tag {
-            display: flex;
-            align-items: center;
-            background: var(--light);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-        }
-        
-        .area-tag i {
-            margin-left: auto;
-            color: var(--danger);
+            border-radius: 6px;
             cursor: pointer;
-        }
-        
-        .price-input {
+            font-weight: 600;
             display: flex;
             align-items: center;
+            gap: 8px;
         }
         
-        .price-input span {
-            background: var(--light);
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-right: none;
-            border-radius: 5px 0 0 5px;
-        }
-        
-        .price-input input {
-            border-radius: 0 5px 5px 0;
-        }
-        
-        .btn-save {
-            background-color: var(--primary);
+        .btn-danger {
+            background-color: #dc3545;
             color: white;
-            padding: 1rem;
-            font-size: 1rem;
         }
         
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
+        .btn-help {
+            background-color: #25D366;
+            color: white;
         }
         
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
         }
         
-        .modal-title {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            color: var(--danger);
+        #real-time-clock {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #6c757d;
         }
         
-        .modal-actions {
+        #real-time-clock div:first-child {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .price-group {
             display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 15px;
         }
         
-        @media (max-width: 768px) {
-            .driver-dashboard {
-                grid-template-columns: 1fr;
-            }
-            
-            header {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            
-            .user-menu {
-                margin-top: 1rem;
-            }
+        .price-group .form-group {
+            flex: 1;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <a href="index.html" class="logo">MOPI<span>LA</span></a>
-        <div class="user-menu">
-            <span>Marc Tchicaya</span>
-            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Profile">
-        </div>
-    </header>
-    
     <div class="container">
-        <div class="driver-dashboard">
-            <div class="driver-profile">
-                <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Profile" class="driver-avatar">
-                <h2 class="driver-name">Marc Tchicaya</h2>
-                <div class="driver-rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span>4.7 (156 avis)</span>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h1>Bonjour, <span class="driver-name">Chauffeur</span></h1>
+                    <div id="real-time-clock"></div>
                 </div>
                 
-                <div class="status-toggle">
-                    <label class="toggle-btn">
-                        <input type="checkbox" id="availability-toggle" checked>
-                        <span class="slider"></span>
-                    </label>
-                    <span class="status-label status-available" id="status-text">En service</span>
+                <div class="user-menu">
+                    <img src="https://mdtcifra.ru/wp-content/uploads/2021/05/no-photo.png" alt="Driver Avatar" class="driver-avatar">
+                    <span class="driver-name">Chauffeur</span>
+                    <button class="logout-btn" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Déconnexion
+                    </button>
                 </div>
-                
-                <div class="driver-stats">
-                    <div class="stat-card">
-                        <div class="stat-value">156</div>
-                        <div class="stat-label">Courses</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">4.7</div>
-                        <div class="stat-label">Note moyenne</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">Aujourd'hui</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">487,500</div>
-                        <div class="stat-label">FCFA gagnés</div>
-                    </div>
-                </div>
-                
-                <button class="btn btn-edit">
-                    <i class="fas fa-edit"></i> Modifier profil
-                </button>
-                <button class="btn btn-delete" id="delete-account-btn">
-                    <i class="fas fa-trash-alt"></i> Supprimer compte
-                </button>
-            </div>
+            </header>
             
-            <div class="driver-content">
-                <h3 class="section-title">Mes informations</h3>
+            <!-- Dashboard Cards -->
+            <section class="dashboard-cards">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Courses aujourd'hui</div>
+                            <div class="card-value" id="today-rides">0</div>
+                        </div>
+                        <div class="card-icon rides">
+                            <i class="fas fa-taxi"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Status Section -->
+            <section class="status-section">
+                <div class="status-header">
+                    <div class="status-title">Statut</div>
+                    <div id="status-text" class="status-text status-offline">Hors Ligne</div>
+                </div>
+                
+                <div class="status-display">
+                    <div class="status-toggle-container">
+                        <span>Disponible</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="availability-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="status-buttons">
+                    <!-- Buttons will be added dynamically by JavaScript -->
+                </div>
+            </section>
+            
+            <!-- Vehicle Info Section -->
+            <section class="vehicle-section">
+                <h2 style="margin-bottom: 20px;">Informations véhicule</h2>
                 
                 <div class="form-group">
                     <label for="car-model">Modèle de voiture</label>
-                    <input type="text" id="car-model" class="form-control" value="Mercedes Classe A - 2019">
+                    <input type="text" id="car-model" class="form-control" readonly>
+                </div>
+                
+                <div class="price-group">
+                    <div class="form-group">
+                        <label for="price-min">Prix minimum (€)</label>
+                        <input type="number" id="price-min" class="form-control" min="0" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="price-max">Prix maximum (€)</label>
+                        <input type="number" id="price-max" class="form-control" min="0" readonly>
+                    </div>
                 </div>
                 
                 <div class="form-group">
                     <label>Zones desservies</label>
                     <div class="areas-grid">
-                        <div class="area-tag">
-                            Centre-ville
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="area-tag">
-                            Bacongo
-                            <i class="fas fa-times"></i>
-                        </div>
-                        <div class="area-tag">
-                            Makelekele
-                            <i class="fas fa-times"></i>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="text" id="new-area" class="form-control" placeholder="Ajouter un quartier">
-                        <button class="btn" style="margin-top: 0.5rem;">
-                            <i class="fas fa-plus"></i> Ajouter
-                        </button>
+                       
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label for="price">Tarif par course</label>
-                    <div class="price-input">
-                        <span>FCFA</span>
-                        <input type="number" id="price" class="form-control" value="4000">
-                    </div>
+            </section>
+            
+            <!-- Action Buttons Section -->
+            <section class="action-section">
+                <div class="action-buttons">
+                    <button id="help-btn" class="btn btn-help">
+                        <i class="fab fa-whatsapp"></i> Aide WhatsApp
+                    </button>
+                    <button id="delete-account-btn" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Supprimer le compte
+                    </button>
                 </div>
-                
-                <button class="btn btn-save">
-                    <i class="fas fa-save"></i> Enregistrer les modifications
-                </button>
-            </div>
-        </div>
+            </section>
+        </main>
     </div>
-    
-    <!-- Modal de suppression -->
-    <div class="modal" id="delete-modal">
-        <div class="modal-content">
-            <h3 class="modal-title">Supprimer votre compte</h3>
-            <p>Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible et toutes vos données seront perdues.</p>
-            
-            <div class="modal-actions">
-                <button class="btn" id="cancel-delete" style="background: #ccc; color: #333;">
-                    Annuler
-                </button>
-                <button class="btn btn-delete">
-                    <i class="fas fa-trash-alt"></i> Supprimer définitivement
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Gestion de la disponibilité
-        const toggle = document.getElementById('availability-toggle');
-        const statusText = document.getElementById('status-text');
-        
-        toggle.addEventListener('change', function() {
-            if (this.checked) {
-                statusText.textContent = 'En service';
-                statusText.className = 'status-label status-available';
-            } else {
-                statusText.textContent = 'Hors service';
-                statusText.className = 'status-label status-unavailable';
-            }
-        });
-        
-        // Gestion de la suppression de compte
-        const deleteBtn = document.getElementById('delete-account-btn');
-        const deleteModal = document.getElementById('delete-modal');
-        const cancelDelete = document.getElementById('cancel-delete');
-        
-        deleteBtn.addEventListener('click', function() {
-            deleteModal.style.display = 'flex';
-        });
-        
-        cancelDelete.addEventListener('click', function() {
-            deleteModal.style.display = 'none';
-        });
-        
-        // Fermer la modal en cliquant à l'extérieur
-        window.addEventListener('click', function(event) {
-            if (event.target === deleteModal) {
-                deleteModal.style.display = 'none';
-            }
-        });
-        
-        // Suppression des zones
-        document.querySelectorAll('.area-tag i').forEach(icon => {
-            icon.addEventListener('click', function() {
-                this.parentElement.remove();
-            });
-        });
-        
-        // Ajout d'une nouvelle zone
-        document.querySelector('.areas-grid + .form-group button').addEventListener('click', function() {
-            const newAreaInput = document.getElementById('new-area');
-            const areaName = newAreaInput.value.trim();
-            
-            if (areaName) {
-                const areaTag = document.createElement('div');
-                areaTag.className = 'area-tag';
-                areaTag.innerHTML = `
-                    ${areaName}
-                    <i class="fas fa-times"></i>
-                `;
-                
-                document.querySelector('.areas-grid').appendChild(areaTag);
-                newAreaInput.value = '';
-                
-                // Ajouter l'événement de suppression au nouveau tag
-                areaTag.querySelector('i').addEventListener('click', function() {
-                    this.parentElement.remove();
-                });
-            }
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="Api/supabase.js"></script>
+    <script src="js/driver.js"></script>
 </body>
 </html>

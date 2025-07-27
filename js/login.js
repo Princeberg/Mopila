@@ -1,69 +1,117 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const loginForm = document.getElementById('loginForm');
-    const otpSection = document.getElementById('otpSection');
-    const displayPhone = document.getElementById('displayPhone');
-    const verifyBtn = document.getElementById('verifyBtn');
-    const resendOtp = document.getElementById('resendOtp');
+
+document.getElementById('loginForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+
+  if (!document.getElementById('uber-notification')) {
+    const notification = document.createElement('div');
+    notification.id = 'uber-notification';
+    notification.className = 'uber-notification hidden';
+    document.body.appendChild(notification);
+
+    const style = document.createElement('style');
+    style.textContent = `
+      .uber-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 1000;
+        transform: translateX(150%);
+        transition: transform 0.3s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        max-width: 300px;
+      }
+      .uber-notification.success {
+        background: #00a650;
+      }
+      .uber-notification.error {
+        background: #e62143;
+      }
+      .uber-notification.warning {
+        background: #ff9900;
+      }
+      .uber-notification.visible {
+        transform: translateX(0);
+      }
+      .uber-notification i {
+        font-size: 20px;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const notification = document.getElementById('uber-notification');
+  const accountNumberInput = document.getElementById('accountNumber');
+  const accountNumber = accountNumberInput.value.trim();
+  const submitBtn = this.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+
+  // Affiche une notification avec un message et un type (success, error, warning)
+  function showNotification(message, type) {
+    notification.innerHTML = `
+      <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+      ${message}
+    `;
+    notification.className = `uber-notification ${type} visible`;
+
+    setTimeout(() => {
+      notification.classList.remove('visible');
+    }, 5000);
+  }
+
+  function disableSubmit(text) {
+    submitBtn.innerHTML = text;
+    submitBtn.disabled = true;
+  }
+
+  function enableSubmit() {
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.disabled = false;
+  }
+
+  if (!accountNumber) {
+    showNotification("Veuillez entrer votre numéro de compte.", "error");
+    enableSubmit();
+    accountNumberInput.focus();
+    return;
+  }
+
+  disableSubmit('<i class="fas fa-spinner fa-spin"></i> Connexion...');
+
+  try {
+    console.log("Recherche du compte:", accountNumber);
+
+    const { data, error } = await supabase
+      .from('Drivers')
+      .select('*')
+      .eq('AccountNumber', accountNumber) 
+      .single();
+
+    if (error || !data) {
+      console.log("Compte non trouvé ou erreur:", error);
+      showNotification("Compte non trouvé.", "error");
+      enableSubmit();
+      accountNumberInput.focus();
+      return;
+    }
     
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const countryCode = document.getElementById('countryCode').value;
-        const phoneNumber = document.getElementById('phone').value;
-        const fullNumber = countryCode + phoneNumber;
-        
-        // In a real app, you would send this to your backend for OTP generation
-        console.log('Phone number submitted:', fullNumber);
-        
-        // Show OTP section
-        displayPhone.textContent = fullNumber;
-        loginForm.style.display = 'none';
-        otpSection.style.display = 'block';
-        
-        // Auto-focus first OTP input
-        const otpInputs = document.querySelectorAll('.otp-inputs input');
-        if(otpInputs.length > 0) {
-            otpInputs[0].focus();
-        }
-    });
-    
-    // Handle OTP input
-    const otpInputs = document.querySelectorAll('.otp-inputs input');
-    otpInputs.forEach((input, index) => {
-        input.addEventListener('input', function() {
-            if(this.value.length === 1) {
-                if(index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                }
-            }
-        });
-        
-        input.addEventListener('keydown', function(e) {
-            if(e.key === 'Backspace' && this.value.length === 0) {
-                if(index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            }
-        });
-    });
-    
-    verifyBtn.addEventListener('click', function() {
-        let otp = '';
-        otpInputs.forEach(input => {
-            otp += input.value;
-        });
-        
-        if(otp.length === 6) {
-            // In a real app, verify OTP with backend
-            alert('OTP verified successfully! Redirecting to dashboard...');
-            // window.location.href = 'driver-dashboard.html';
-        } else {
-            alert('Please enter a complete 6-digit OTP code');
-        }
-    });
-    
-    resendOtp.addEventListener('click', function(e) {
-        e.preventDefault();
-        alert('New OTP code sent to your phone number');
-    });
+    localStorage.setItem('driver', JSON.stringify(data));
+
+    showNotification("Connexion réussie! Redirection...", "success");
+
+    setTimeout(() => {
+      window.location.href = 'Driver.html';
+    }, 1000);
+  } catch (err) {
+    console.error("Erreur lors de la connexion :", err);
+    showNotification("Une erreur est survenue. Réessayez.", "error");
+    enableSubmit();
+    accountNumberInput.focus();
+  }
 });
