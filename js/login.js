@@ -1,3 +1,4 @@
+import { supabase } from '../Api/supabase.js';
 
 document.getElementById('loginForm').addEventListener('submit', async function (e) {
   e.preventDefault();
@@ -52,7 +53,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
   const submitBtn = this.querySelector('button[type="submit"]');
   const originalBtnText = submitBtn.innerHTML;
 
-  // Affiche une notification avec un message et un type (success, error, warning)
+ 
   function showNotification(message, type) {
     notification.innerHTML = `
       <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>

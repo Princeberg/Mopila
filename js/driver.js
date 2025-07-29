@@ -1,436 +1,336 @@
-// Logout function
-        function setupLogout() {
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => {
-                    localStorage.removeItem('driver');
-                    window.location.href = 'login.html';
-                });
-            }
-        }
+import { supabase } from '../Api/supabase.js';
 
-        // Delete account function
-        function setupDeleteAccount(driverId) {
-            const deleteBtn = document.getElementById('delete-account-btn');
-            if (!deleteBtn) return;
+document.addEventListener('DOMContentLoaded', async () => {
+  createNotificationSystem();
+  setupLogout();
+  setupHelpButton();
+  setupRealTimeClock();
+  setupAutoRefresh();
 
-            deleteBtn.addEventListener('click', async () => {
-                if (!confirm("Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.")) {
-                    return;
-                }
+  let driverData = null;
+  try {
+    driverData = JSON.parse(localStorage.getItem('driver'));
+    console.log("Driver data from localStorage:", driverData);
+  } catch (e) {
+    console.warn("Erreur lors de la lecture du driver dans localStorage", e);
+    driverData = null;
+  }
 
-                try {
-                    // First delete associated cars
-                    const { error: carError } = await supabase
-                        .from('Cars')
-                        .delete()
-                        .eq('Driver_id', driverId);
+  if (!driverData || !driverData.id) {
+    showNotification("Veuillez vous connecter", "error");
+    setTimeout(() => window.location.href = 'login.html', 2000);
+    return;
+  }
+  const driverId = driverData.id;
 
-                    if (carError) throw carError;
+  // Fetch driver info and display
+  await loadAndDisplayDriverInfo(driverId);
 
-                    // Then delete the driver
-                    const { error: driverError } = await supabase
-                        .from('Drivers')
-                        .delete()
-                        .eq('id', driverId);
+  // Load and display pinned orders
+  await loadPinnedOrders(driverId);
+});
 
-                    if (driverError) throw driverError;
+async function loadAndDisplayDriverInfo(driverId) {
+  try {
+    const { data: driver, error } = await supabase
+      .from('Drivers')
+      .select('Pseudo, PictureLink')
+      .eq('id', driverId)
+      .single();
 
-                    localStorage.removeItem('driver');
-                    showNotification("Compte supprimé avec succès", "success");
-                    setTimeout(() => window.location.href = 'login.html', 1500);
+    if (error) throw error;
 
-                } catch (error) {
-                    showNotification("Erreur lors de la suppression du compte", "error");
-                    console.error("Delete account error:", error);
-                }
-            });
-        }
+    // Display pseudo and picture
+    const pseudoEls = document.querySelectorAll('.driver-name');
+    pseudoEls.forEach(el => el.textContent = driver.Pseudo || 'Chauffeur');
 
-        // Setup help button (WhatsApp)
-        function setupHelpButton() {
-            const helpBtn = document.getElementById('help-btn');
-            if (helpBtn) {
-                helpBtn.addEventListener('click', () => {
-                    window.open('https://wa.me/89604663774', '_blank'); 
-                });
-            }
-        }
+    const avatarEls = document.querySelectorAll('.driver-avatar');
+    avatarEls.forEach(el => {
+      el.src = driver.PictureLink || 'https://mdtcifra.ru/wp-content/uploads/2021/05/no-photo.png';
+      el.alt = `Photo de ${driver.Pseudo || 'chauffeur'}`;
+    });
 
-        // Real-time clock
-        function setupRealTimeClock() {
-            function updateClock() {
-                const now = new Date();
-                const dateStr = now.toLocaleDateString('fr-FR', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-                const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                
-                const clockElement = document.getElementById('real-time-clock');
-                if (clockElement) {
-                    clockElement.innerHTML = `
-                        <div>${dateStr}</div>
-                        <div>${timeStr}</div>
-                    `;
-                }
-            }
-            
-            updateClock();
-            setInterval(updateClock, 60000); // Update every minute
-        }
+  } catch (error) {
+    showNotification("Erreur lors du chargement des infos du chauffeur", "error");
+    console.error(error);
+  }
+}
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            createNotificationSystem();
-            setupLogout();
-            setupHelpButton();
-            setupRealTimeClock();
+async function loadPinnedOrders(driverId) {
+  try {
+    const { data: orders, error } = await supabase
+      .from('Orders')
+      .select('*')
+      .eq('Statut', 'pinned');
 
-            let driverData = null;
-            try {
-                driverData = JSON.parse(localStorage.getItem('driver'));
-                console.log("Driver data from localStorage:", driverData);
-            } catch (e) {
-                console.warn("Erreur lors de la lecture du driver dans localStorage", e);
-                driverData = null;
-            }
+    if (error) throw error;
 
-            // Vérifie la présence de driver valide
-            if (!driverData || !driverData.id) {
-                showNotification("Veuillez vous connecter", "error");
-                setTimeout(() => window.location.href = 'login.html', 2000);
-                return;
-            }
+    const container = document.getElementById('orders-container');
 
-            const driverId = driverData.id;
-            setupDeleteAccount(driverId);
+    if (!orders || orders.length === 0) {
+      container.innerHTML = '<p>Aucune commande disponible pour le moment.</p>';
+      return;
+    }
 
-            try {
-                // Récupère les infos à jour du chauffeur
-                const { data: driver, error: driverError } = await supabase
-                    .from('Drivers')
-                    .select('*')
-                    .eq('id', driverId)
-                    .single();
+    renderOrderSwiper(orders, driverId);
+  } catch (error) {
+    showNotification("Erreur lors du chargement des commandes", "error");
+    console.error(error);
+  }
+}
 
-                if (driverError) {
-                    showNotification("Erreur lors du chargement des données", "error");
-                    console.error(driverError);
-                    return;
-                }
-                if (!driver) {
-                    showNotification("Chauffeur introuvable", "error");
-                    console.error("Driver non trouvé dans la base");
-                    return;
-                }
+function renderOrderSwiper(orders, driverId) {
+  const container = document.getElementById('orders-container');
+  container.innerHTML = ''; // Clear previous
 
-                // Bloque si compte "Not Active"
-                if (driver.Account_statuts && driver.Account_statuts.toLowerCase() === "not active") {
-                    document.body.innerHTML = `
-                        <div class="account-blocked">
-                            <h2>Votre compte est bloqué</h2>
-                            <p>Écrivez-nous pour demander un déblocage.</p>
-                            <a href="mailto:contact@mopila.com" class="btn btn-contact">Nous contacter</a>
-                        </div>
-                    `;
-                    return;
-                }
+  // Wrapper div with swiper-wrapper class
+  const swiperWrapper = document.createElement('div');
+  swiperWrapper.className = 'swiper-wrapper';
 
-                // Récupère les voitures associées
-                const { data: cars, error: carError } = await supabase
-                    .from('Cars')
-                    .select('*')
-                    .eq('Driver_id', driverId);
+  orders.forEach(order => {
+    const slide = document.createElement('div');
+    slide.className = 'swiper-slide';
 
-                if (carError) {
-                    showNotification("Erreur lors du chargement du véhicule", "error");
-                    console.error(carError);
-                    return;
-                }
+    slide.innerHTML = `
+      <div class="order-card">
+        <h3>Point de départ : <span>${order.Start}</span></h3>
+        <h3>Point d'arrivée : <span>${order.End}</span></h3>
+        <h4>Tarif de la course : <span>${order.Price}</span></h4>
+        <button class="btn btn-accept" data-order-id="${order.id}" data-phone="${order.PhoneNumber}">Accepter</button>
+      </div>
+    `;
 
-                const car = cars && cars.length > 0 ? cars[0] : null;
+    swiperWrapper.appendChild(slide);
+  });
 
-                // Mise à jour de l'interface avec les données récupérées
-                updateDriverUI(driver, car);
+  container.appendChild(swiperWrapper);
 
-                // Initialisation des boutons/toggles de statut
-                setupStatusToggle(driver, driverId);
-                setupStatusButtons(driver, driverId);
+  addSwiperStyles();
 
-            } catch (error) {
-                showNotification("Une erreur inattendue est survenue", "error");
-                console.error("Unexpected error:", error);
-            }
-        });
+  simpleSwiper(swiperWrapper);
 
+  container.querySelectorAll('.btn-accept').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const orderId = btn.dataset.orderId;
+      const phone = btn.dataset.phone;
+      acceptOrder(orderId, driverId, phone);
+    });
+  });
+}
 
-        // --- Fonctions utilitaires ---
+function addSwiperStyles() {
+  if (document.getElementById('swiper-styles')) return;
 
-        function createNotificationSystem() {
-            if (!document.getElementById('uber-notification')) {
-                const notification = document.createElement('div');
-                notification.id = 'uber-notification';
-                notification.className = 'uber-notification hidden';
-                document.body.appendChild(notification);
+  const style = document.createElement('style');
+  style.id = 'swiper-styles';
+  style.textContent = `
+    #orders-container {
+      max-width: 400px;
+      margin: 30px auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      background: #fff; /* keep light bg */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .swiper-wrapper {
+      display: flex;
+      transition: transform 0.8s ease-in-out;
+      will-change: transform;
+    }
+    .swiper-slide {
+      min-width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      animation: fadeInSlide 0.8s ease forwards;
+    }
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateX(50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .order-card h3, .order-card h4 {
+      margin: 8px 0;
+      font-weight: 600;
+    }
+    .order-card span {
+      font-weight: 400;
+      color: #555;
+    }
+    .btn-accept {
+      margin-top: 15px;
+      padding: 12px 25px;
+      background-color: #00a650;
+      color: white;
+      font-weight: 700;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      box-shadow: 0 5px 15px rgba(0,166,80,0.4);
+    }
+    .btn-accept:hover {
+      background-color: #007a38;
+    }
+  `;
+  document.head.appendChild(style);
+}
 
-                const style = document.createElement('style');
-                style.textContent = `
-                    .uber-notification {
-                        position: fixed;
-                        top: 20px;
-                        right: 20px;
-                        padding: 15px 25px;
-                        border-radius: 8px;
-                        color: white;
-                        font-weight: 500;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                        z-index: 1000;
-                        transform: translateX(150%);
-                        transition: transform 0.3s ease-out;
-                        display: flex;
-                        align-items: center;
-                        gap: 10px;
-                        max-width: 300px;
-                    }
-                    .uber-notification.success { background: #00a650; }
-                    .uber-notification.error { background: #e62143; }
-                    .uber-notification.warning { background: #ff9900; }
-                    .uber-notification.visible { transform: translateX(0); }
-                    .uber-notification i { font-size: 20px; }
+function simpleSwiper(wrapper) {
+  let currentIndex = 0;
+  const slides = wrapper.querySelectorAll('.swiper-slide');
+  if (slides.length <= 1) return;
 
-                    .account-blocked {
-                        text-align: center;
-                        padding: 50px 20px;
-                        max-width: 500px;
-                        margin: 0 auto;
-                    }
-                    .account-blocked h2 {
-                        color: #e62143;
-                        margin-bottom: 20px;
-                    }
+  setInterval(() => {
+    currentIndex = (currentIndex + 1) % slides.length;
+    const offset = -currentIndex * 100;
+    wrapper.style.transform = `translateX(${offset}%)`;
+  }, 5000);
+}
 
-                    /* Statuts couleurs */
-                    .status-text {
-                        font-weight: bold;
-                        padding: 6px 12px;
-                        border-radius: 20px;
-                        display: inline-block;
-                        color: white;
-                        min-width: 100px;
-                        text-align: center;
-                    }
-                    .status-available { background-color: #00a650; }
-                    .status-busy { background-color: #ff9900; }
-                    .status-offline { background-color: #6c757d; }
+async function acceptOrder(orderId, driverId, phoneNumber) {
+  try {
+    showNotification("Acceptation de la commande...", "success");
 
-                    /* Boutons de statut */
-                    .btn-status {
-                        margin: 0 5px 10px 0;
-                        padding: 8px 15px;
-                        border: none;
-                        border-radius: 6px;
-                        cursor: pointer;
-                        font-weight: 600;
-                    }
-                    .btn-status:hover {
-                        opacity: 0.85;
-                    }
-                    .btn-warning {
-                        background-color: #ff9900;
-                        color: white;
-                    }
-                    .btn-danger {
-                        background-color: #dc3545;
-                        color: white;
-                    }
-                    .btn-status:not(.btn-warning):not(.btn-danger) {
-                        background-color: #007bff;
-                        color: white;
-                    }
+    const { error: orderError } = await supabase
+      .from('Orders')
+      .update({ Statut: 'Accepted' })
+      .eq('id', orderId);
 
-                    /* Zones et tarifs en lecture seule */
-                    .read-only {
-                        background-color: #f8f9fa;
-                        border: 1px solid #ced4da;
-                        cursor: not-allowed;
-                    }
+    if (orderError) throw orderError;
 
-                    /* Area tags */
-                    .area-tag {
-                        display: inline-block;
-                        padding: 6px 12px;
-                        background-color: #e9ecef;
-                        border-radius: 20px;
-                        margin: 0 5px 5px 0;
-                        font-size: 0.9em;
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-        }
+    const { data: orderData, error: fetchOrderError } = await supabase
+      .from('Orders')
+      .select('Price')
+      .eq('id', orderId)
+      .single();
 
-        function showNotification(message, type) {
-            const notification = document.getElementById('uber-notification');
-            notification.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                ${message}
-            `;
-            notification.className = `uber-notification ${type} visible`;
+    if (fetchOrderError) throw fetchOrderError;
+    if (!orderData) throw new Error("Commande introuvable après acceptation.");
 
-            setTimeout(() => {
-                notification.classList.remove('visible');
-            }, 5000);
-        }
+    const price = parseFloat(orderData.Price);
+    if (isNaN(price)) throw new Error("Prix invalide.");
 
-        function updateDriverUI(driver, car) {
-            // Nom chauffeur dans plusieurs éléments
-            const driverNameElems = document.querySelectorAll('.driver-name, .user-menu span');
-            driverNameElems.forEach(el => {
-                el.textContent = driver.Pseudo || 'Chauffeur';
-            });
+    const agencyRevenue = price * 0.05;
 
-            // Photo profil
-            const avatarUrl = driver.PictureLink || 'https://mdtcifra.ru/wp-content/uploads/2021/05/no-photo.png';
-            document.querySelectorAll('img.driver-avatar, .user-menu img').forEach(img => {
-                img.src = avatarUrl;
-            });
+    const { error: insertCourseError } = await supabase
+      .from('Courses')
+      .insert([{
+        Order_id: orderId,
+        Driver_id: driverId,
+        Revenu: agencyRevenue.toFixed(2),
+      }]);
 
-            // Update today rides count
-            if (driver.Total_Courses) {
-                document.getElementById('today-rides').textContent = driver.Total_Courses;
-            }
+    if (insertCourseError) throw insertCourseError;
 
-            // Zones desservies (read-only)
-            const zones = driver.Zones ? driver.Zones.split(',').map(z => z.trim()).filter(z => z.length) : [];
-            const areasGrid = document.querySelector('.areas-grid');
-            if (areasGrid) {
-                areasGrid.innerHTML = '';
-                zones.forEach(zone => {
-                    const tag = document.createElement('div');
-                    tag.className = 'area-tag read-only';
-                    tag.textContent = zone;
-                    areasGrid.appendChild(tag);
-                });
-            }
+    window.open(`tel:${phoneNumber}`, '_self');
 
-            // Infos véhicule
-            const carModelInput = document.getElementById('car-model');
-            if (carModelInput) {
-                carModelInput.value = car ? `${car.Mark} ${car.Model} - ${car.Year}` : '';
-                carModelInput.classList.add('read-only');
-            }
+    showNotification("Commande acceptée !", "success");
 
-            // Prix minimum et maximum (read-only)
-            const priceMinInput = document.getElementById('price-min');
-            if (priceMinInput) {
-                priceMinInput.value = driver.Price_Min || '0';
-                priceMinInput.classList.add('read-only');
-            }
+    // Reload orders after 2 seconds
+    setTimeout(() => loadPinnedOrders(driverId), 2000);
 
-            const priceMaxInput = document.getElementById('price-max');
-            if (priceMaxInput) {
-                priceMaxInput.value = driver.Price_Max || '0';
-                priceMaxInput.classList.add('read-only');
-            }
+  } catch (error) {
+    showNotification("Erreur lors de l'acceptation", "error");
+    console.error(error);
+  }
+}
 
-            // Statut affichage
-            updateStatusLabel(driver.statut || 'Hors Ligne');
-        }
+function createNotificationSystem() {
+  if (!document.getElementById('uber-notification')) {
+    const notification = document.createElement('div');
+    notification.id = 'uber-notification';
+    notification.className = 'uber-notification hidden';
+    document.body.appendChild(notification);
 
-        function setupStatusToggle(driver, driverId) {
-            const toggle = document.getElementById('availability-toggle');
-            if (!toggle) return;
+    const style = document.createElement('style');
+    style.textContent = `
+      .uber-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        transform: translateX(150%);
+        transition: transform 0.3s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        max-width: 300px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .uber-notification.success { background: #00a650; }
+      .uber-notification.error { background: #e62143; }
+      .uber-notification.visible { transform: translateX(0); }
+      .uber-notification i { font-size: 20px; }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
-            toggle.checked = driver.statut === 'Disponible';
+function showNotification(message, type) {
+  const notification = document.getElementById('uber-notification');
+  notification.innerHTML = `
+      <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+      ${message}
+  `;
+  notification.className = `uber-notification ${type} visible`;
 
-            toggle.addEventListener('change', async () => {
-                const newStatus = toggle.checked ? 'Disponible' : 'Hors Ligne';
+  setTimeout(() => {
+    notification.classList.remove('visible');
+  }, 5000);
+}
 
-                try {
-                    const { error } = await supabase
-                        .from('Drivers')
-                        .update({ statut: newStatus })
-                        .eq('id', driverId);
+function setupLogout() {
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+      localStorage.removeItem('driver');
+      window.location.href = 'login.html';
+    });
+  }
+}
 
-                    if (error) throw error;
+function setupHelpButton() {
+  const helpBtn = document.getElementById('help-btn');
+  if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+      window.open('https://wa.me/89604663774', '_blank');
+    });
+  }
+}
 
-                    updateStatusLabel(newStatus);
-                    driver.statut = newStatus;
-                    localStorage.setItem('driver', JSON.stringify(driver));
-                    showNotification("Statut mis à jour", "success");
+function setupRealTimeClock() {
+  function updateClock() {
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('fr-FR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+    const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
 
-                } catch (error) {
-                    toggle.checked = !toggle.checked; // revert UI toggle
-                    showNotification("Erreur lors de la mise à jour", "error");
-                    console.error(error);
-                }
-            });
-        }
+    const clockElement = document.getElementById('real-time-clock');
+    if (clockElement) {
+      clockElement.innerHTML = `
+          <div>${dateStr}</div>
+          <div>${timeStr}</div>
+      `;
+    }
+  }
 
-        function setupStatusButtons(driver, driverId) {
-            const statutOptions = ['Disponible', 'En course', 'Hors Ligne'];
-            const toggleContainer = document.querySelector('.status-buttons');
-            if (!toggleContainer) return;
+  updateClock();
+  setInterval(updateClock, 60000);
+}
 
-            toggleContainer.innerHTML = ''; // Reset
-
-            statutOptions.forEach(status => {
-                const btn = document.createElement('button');
-                btn.textContent = status;
-                btn.className = `btn-status ${status === 'En course' ? 'btn-warning' : status === 'Hors Ligne' ? 'btn-danger' : ''}`;
-
-                btn.addEventListener('click', async () => {
-                    try {
-                        const updates = { statut: status };
-                        
-                        // Add +1 to Total_Courses when status changes to "En course"
-                        if (status === 'En course') {
-                            updates.Total_Courses = (driver.Total_Courses || 0) + 1;
-                        }
-
-                        const { error } = await supabase
-                            .from('Drivers')
-                            .update(updates)
-                            .eq('id', driverId);
-
-                        if (error) throw error;
-
-                        driver.statut = status;
-                        if (status === 'En course') {
-                            driver.Total_Courses = updates.Total_Courses;
-                            document.getElementById('today-rides').textContent = updates.Total_Courses;
-                        }
-                        
-                        localStorage.setItem('driver', JSON.stringify(driver));
-                        updateStatusLabel(status);
-                        showNotification("Statut mis à jour", "success");
-
-                    } catch (error) {
-                        showNotification("Erreur lors de la mise à jour", "error");
-                        console.error(error);
-                    }
-                });
-
-                toggleContainer.appendChild(btn);
-            });
-        }
-
-        function updateStatusLabel(status) {
-            const statusText = document.getElementById('status-text');
-            if (!statusText) return;
-
-            statusText.textContent = status;
-            statusText.className = 'status-text'; // Reset
-
-            if (status === 'Disponible') {
-                statusText.classList.add('status-available');
-            } else if (status === 'En course') {
-                statusText.classList.add('status-busy');
-            } else if (status === 'Hors Ligne') {
-                statusText.classList.add('status-offline');
-            }
-        }
-
-        
+function setupAutoRefresh() {
+  setInterval(() => {
+    location.reload();
+  }, 300000); // every 5 minutes
+}

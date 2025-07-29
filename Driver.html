@@ -1,173 +1,342 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOPILA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="icon" type="image/x-icon" href="src/mopila-logo.png">  
-    <link rel="stylesheet" href="css/driver.css">
-    <style>
-        /* Styles supplémentaires pour les nouvelles fonctionnalités */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .btn {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        
-        .btn-help {
-            background-color: #25D366;
-            color: white;
-        }
-        
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        
-        #real-time-clock {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            font-size: 0.9em;
-            color: #6c757d;
-        }
-        
-        #real-time-clock div:first-child {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .price-group {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .price-group .form-group {
-            flex: 1;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOPILA - Dashboard Chauffeur</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+  />
+  <link rel="icon" type="image/x-icon" href="src/mopila-logo.png" />
+  <style>
+    /* Reset & base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa; /* Uber light gray */
+      color: #1c1c1c;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      outline: none;
+      font-family: inherit;
+      user-select: none;
+    }
+    button:focus-visible {
+      outline: 2px solid #0a84ff;
+      outline-offset: 2px;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 2rem auto 4rem;
+      padding: 0 15px;
+    }
+
+    /* Header */
+    header.header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .header-title h1 {
+      font-weight: 700;
+      font-size: 1.9rem;
+      margin: 0;
+      line-height: 1.1;
+    }
+    .header-title h1 span.driver-name {
+      color: #00a650; /* Uber green-ish */
+      transition: color 0.3s ease;
+    }
+    #real-time-clock {
+      font-weight: 400;
+      font-size: 0.95rem;
+      color: #555;
+      margin-top: 4px;
+      font-style: italic;
+      font-family: 'Courier New', Courier, monospace;
+      user-select: none;
+    }
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .driver-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid #00a650;
+      box-shadow: 0 2px 10px rgb(0 166 80 / 0.3);
+      transition: transform 0.3s ease;
+    }
+    .driver-avatar:hover {
+      transform: scale(1.05);
+    }
+    .user-menu .driver-name {
+      font-weight: 600;
+      font-size: 1.15rem;
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #2a2a2a;
+      user-select: text;
+    }
+    #logout-btn {
+      background-color: transparent;
+      color: #00a650;
+      padding: 8px 20px;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      border: 2.5px solid #00a650;
+      font-size: 0.95rem;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+    }
+    #logout-btn:hover,
+    #logout-btn:focus {
+      background-color: #00a650;
+      color: #f8f9fa;
+      box-shadow: 0 5px 20px rgb(0 166 80 / 0.6);
+    }
+
+    /* Orders Container */
+    #orders-container {
+      background-color: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 35px rgb(0 166 80 / 0.15);
+      overflow: hidden;
+      max-width: 100%;
+      margin-bottom: 3rem;
+      user-select: none;
+      min-height: 190px;
+      position: relative;
+      padding: 15px;
+    }
+    .swiper-wrapper {
+      display: flex;
+      transition: transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+      will-change: transform;
+      overflow-x: hidden;
+    }
+    .swiper-slide {
+      flex: 0 0 100%;
+      padding: 30px 40px;
+      box-sizing: border-box;
+      color: #1c1c1c;
+      font-weight: 600;
+      border-radius: 14px;
+      background: #f0fdf4;
+      box-shadow: 0 4px 10px rgb(0 166 80 / 0.2);
+      opacity: 0;
+      transform: translateX(30px);
+      animation: fadeInSlide 0.6s forwards;
+    }
+    .swiper-slide:nth-child(1) {
+      animation-delay: 0.15s;
+    }
+    .swiper-slide:nth-child(2) {
+      animation-delay: 0.3s;
+    }
+    .swiper-slide:nth-child(3) {
+      animation-delay: 0.45s;
+    }
+    /* Add more nth-child if needed */
+
+    @keyframes fadeInSlide {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .order-card h3,
+    .order-card h4 {
+      margin: 0.6rem 0 0.4rem 0;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: #007a38;
+    }
+    .order-card span {
+      font-weight: 500;
+      color: #3a3a3a;
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 0.8rem;
+    }
+    .btn-accept {
+      margin-top: 22px;
+      padding: 14px 28px;
+      background-color: #00a650;
+      color: white;
+      font-weight: 700;
+      border-radius: 35px;
+      width: 100%;
+      box-shadow: 0 7px 20px rgba(0, 166, 80, 0.55);
+      transition: background-color 0.25s ease;
+      user-select: none;
+      font-size: 1.05rem;
+    }
+    .btn-accept:hover,
+    .btn-accept:focus {
+      background-color: #007a38;
+      box-shadow: 0 10px 28px rgba(0, 122, 56, 0.7);
+      outline: none;
+    }
+    .btn-accept:active {
+      transform: scale(0.97);
+      transition: none;
+    }
+
+    /* Action Buttons */
+    .action-section {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      max-width: 400px;
+    }
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 26px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 35px;
+      user-select: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 18px rgba(0, 166, 80, 0.35);
+      border: none;
+    }
+    .btn-help {
+      background-color: #128c7e;
+      color: white;
+      box-shadow: 0 6px 20px #128c7eaa;
+    }
+    .btn-help:hover,
+    .btn-help:focus {
+      background-color: #075e54;
+      box-shadow: 0 8px 28px #075e54cc;
+      outline: none;
+    }
+    .btn-danger {
+      background-color: #e62143;
+      color: white;
+      box-shadow: 0 6px 20px rgba(230, 33, 67, 0.6);
+    }
+    .btn-danger:hover,
+    .btn-danger:focus {
+      background-color: #b71831;
+      box-shadow: 0 8px 28px rgba(183, 24, 49, 0.85);
+      outline: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header.header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      .user-menu {
+        gap: 12px;
+      }
+      .driver-avatar {
+        width: 48px;
+        height: 48px;
+      }
+      .user-menu .driver-name {
+        font-size: 1rem;
+      }
+      #logout-btn {
+        padding: 7px 16px;
+        font-size: 0.9rem;
+      }
+      .swiper-slide {
+        padding: 20px 25px;
+      }
+      .btn {
+        font-size: 1rem;
+        padding: 12px 22px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div class="header-title">
-                    <h1>Bonjour, <span class="driver-name">Chauffeur</span></h1>
-                    <div id="real-time-clock"></div>
-                </div>
-                
-                <div class="user-menu">
-                    <img src="https://mdtcifra.ru/wp-content/uploads/2021/05/no-photo.png" alt="Driver Avatar" class="driver-avatar">
-                    <span class="driver-name">Chauffeur</span>
-                    <button class="logout-btn" id="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Déconnexion
-                    </button>
-                </div>
-            </header>
-            
-            <!-- Dashboard Cards -->
-            <section class="dashboard-cards">
-                <div class="card">
-                    <div class="card-header">
-                        <div>
-                            <div class="card-title">Courses aujourd'hui</div>
-                            <div class="card-value" id="today-rides">0</div>
-                        </div>
-                        <div class="card-icon rides">
-                            <i class="fas fa-taxi"></i>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Status Section -->
-            <section class="status-section">
-                <div class="status-header">
-                    <div class="status-title">Statut</div>
-                    <div id="status-text" class="status-text status-offline">Hors Ligne</div>
-                </div>
-                
-                <div class="status-display">
-                    <div class="status-toggle-container">
-                        <span>Disponible</span>
-                        <label class="toggle-switch">
-                            <input type="checkbox" id="availability-toggle">
-                            <span class="slider"></span>
-                        </label>
-                    </div>
-                </div>
-                
-                <div class="status-buttons">
-                    <!-- Buttons will be added dynamically by JavaScript -->
-                </div>
-            </section>
-            
-            <!-- Vehicle Info Section -->
-            <section class="vehicle-section">
-                <h2 style="margin-bottom: 20px;">Informations véhicule</h2>
-                
-                <div class="form-group">
-                    <label for="car-model">Modèle de voiture</label>
-                    <input type="text" id="car-model" class="form-control" readonly>
-                </div>
-                
-                <div class="price-group">
-                    <div class="form-group">
-                        <label for="price-min">Prix minimum (€)</label>
-                        <input type="number" id="price-min" class="form-control" min="0" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="price-max">Prix maximum (€)</label>
-                        <input type="number" id="price-max" class="form-control" min="0" readonly>
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label>Zones desservies</label>
-                    <div class="areas-grid">
-                       
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Action Buttons Section -->
-            <section class="action-section">
-                <div class="action-buttons">
-                    <button id="help-btn" class="btn btn-help">
-                        <i class="fab fa-whatsapp"></i> Aide WhatsApp
-                    </button>
-                    <button id="delete-account-btn" class="btn btn-danger">
-                        <i class="fas fa-trash-alt"></i> Supprimer le compte
-                    </button>
-                </div>
-            </section>
-        </main>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="Api/supabase.js"></script>
-    <script src="js/driver.js"></script>
+  <div class="container" role="main">
+    <header class="header" role="banner">
+      <div class="header-title">
+        <h1>
+          Bonjour, <span class="driver-name" id="driver-name-header">Chauffeur</span>
+        </h1>
+        <div id="real-time-clock" aria-live="polite" aria-atomic="true">--:--:--</div>
+      </div>
+      <div class="user-menu">
+        <img
+          src="https://mdtcifra.ru/wp-content/uploads/2021/05/no-photo.png"
+          alt="Photo du chauffeur"
+          class="driver-avatar"
+          id="driver-avatar"
+          aria-hidden="true"
+          loading="lazy"
+        />
+        <span class="driver-name" id="driver-name-menu">Chauffeur</span>
+        <button id="logout-btn" title="Déconnexion">
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Déconnexion
+        </button>
+      </div>
+    </header>
+
+    <section id="orders-container" aria-label="Commandes en attente">
+      <div class="swiper-wrapper" id="orders-wrapper">
+        
+      </div>
+    </section>
+
+    <section class="action-section" aria-label="Actions disponibles">
+      <div class="action-buttons">
+        <button id="help-btn" class="btn btn-help" aria-label="Aide WhatsApp">
+          <i class="fab fa-whatsapp" aria-hidden="true"></i> Aide
+        </button>
+        <button id="delete-account-btn" class="btn btn-danger" aria-label="Supprimer le compte">
+          <i class="fas fa-trash-alt" aria-hidden="true"></i> Supprimer le compte
+        </button>
+      </div>
+    </section>
+  </div>
+ <script type="module" src="js/driver.js"></script>
 </body>
 </html>
