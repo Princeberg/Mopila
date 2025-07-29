@@ -53,7 +53,7 @@ function updatePrice() {
   const endCoords = JSON.parse(endSelect.value);
   const distance = calculateDistance(...startCoords, ...endCoords);
 
-  const baseFare = 1500;
+  const baseFare = 1300;
   const pricePerKm = 150;
   const total = baseFare + distance * pricePerKm;
   const roundedPrice = roundToNextHundred(total);
