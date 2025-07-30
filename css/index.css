@@ -1210,132 +1210,48 @@ footer {
   box-shadow: 0 12px 25px rgb(0 120 193 / 0.45);
 }
 
-.popup-form {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background-color: rgba(0,0,0,0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1050;
-  padding: 1rem;
-  overflow: auto;
-}
-
-.popup-content {
-  background: #fff;
-  padding: 2.5rem 2rem;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgb(0 0 0 / 0.15);
-  width: 100%;
-  max-width: 420px;
-  font-family: 'Uber Move', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  text-align: center;
-  animation: popupEnter 0.3s ease-in-out;
-}
-
-@keyframes popupEnter {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.popup-content h4 {
-  font-weight: 800;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-  color: #111;
-}
-
-.popup-content input {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  margin: 0.6rem 0;
-  border: 1.5px solid #ccc;
-  border-radius: 14px;
-  font-size: 1rem;
-  font-weight: 500;
-  transition: border-color 0.25s ease;
-}
-
-.popup-content input:focus {
-  outline: none;
-  border-color: #00a0f0;
-  box-shadow: 0 0 10px rgba(0, 160, 240, 0.4);
-}
-
-.popup-content button {
-  width: 100%;
-  padding: 0.9rem 0;
-  margin-top: 1rem;
-  font-size: 1.1rem;
-  font-weight: 700;
-  border-radius: 14px;
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 0.3s ease;
-}
-
-.popup-content button.btn-success {
-  background-color: #00a0f0;
-  border: none;
-  color: white;
-  box-shadow: 0 8px 25px rgb(0 160 240 / 0.4);
-}
-
-.popup-content button.btn-success:hover {
-  background-color: #0079c1;
-  box-shadow: 0 12px 30px rgb(0 120 193 / 0.6);
-}
-
-/* Annuler */
-.popup-content button.btn-outline-secondary {
-  background-color: #f8f8f8;
-  border: 1.5px solid #ccc;
-  color: #555;
-}
-
-.popup-content button.btn-outline-secondary:hover {
-  background-color: #eaeaea;
-  border-color: #00a0f0;
-  color: #00a0f0;
-}
-
-/* --- Toast Notifications --- */
-.popup-toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100%);
-  background-color: #222;
+.popup-notification {
+  pointer-events: auto;
+  background-color: #000;
   color: #fff;
-  padding: 15px 25px;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 15px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-family: 'Uber Move', sans-serif;
+  font-size: 14px;
+  margin-top: 10px;
   opacity: 0;
-  z-index: 9999;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(20px);
+  animation: popupFadeIn 0.3s forwards;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.popup-toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+.popup-success {
+  background-color: #00b14f; /* Uber green */
+  color: white;
 }
 
-.popup-toast.success {
-  background-color: #28a745;
+.popup-error {
+  background-color: #e03131; /* Uber red */
+  color: white;
 }
 
-.popup-toast.error {
-  background-color: #dc3545;
+@keyframes popupFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
+@keyframes popupFadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
 
 /* --- Responsive Tweaks --- */
 @media (max-width: 768px) {
@@ -1367,4 +1283,36 @@ button:disabled {
   cursor: not-allowed;
   box-shadow: none !important;
 }
-
+ .autocomplete-container {
+      position: relative;
+    }
+    .form-group {
+      position: relative;
+    }
+    .suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #ccc;
+      border-top: none;
+      z-index: 1050;
+      max-height: 250px;
+      overflow-y: auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 0 0 6px 6px;
+    }
+    .suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      font-size: 0.95rem;
+    }
+    .suggestion-item:hover {
+      background-color: #f1f1f1;
+    }
+    .hero h1,
+    .hero p {
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }

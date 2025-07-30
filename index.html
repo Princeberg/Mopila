@@ -1,153 +1,181 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">  
-    <meta name="viewport" content="width=device-width, initial-scale=1">  
-    <link rel="icon" type="image/x-icon" href="src/mopila-logo.png">  
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css">
-    <link rel="stylesheet" href="css/index.css">
-    <title>MOPILA - Chauffeur privé </title>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <link rel="icon" type="image/x-icon" href="src/mopila-logo.png" />  
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+  /> 
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="css/index.css" />
+  <title>MOPILA - Chauffeur privé</title>
 </head>
+
 <body>
-    <header>
-        <div class="logo-container">
-            <img src="src/mopila-logo.png" alt="MOPILA Logo" class="logo-img">
-        </div>
-       <a href="demande.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-    <button class="driver-space-btn">
+
+  <header>
+    <div class="logo-container">
+      <img src="src/mopila-logo.png" alt="MOPILA Logo" class="logo-img" />
+    </div>
+    <a href="demande.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+      <button class="driver-space-btn">
         <i class="fas fa-car"></i> Devenir MOPILA
-    </button>
-</a>
-
-        <a href="login.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
-        <button class="driver-space-btn">
-            <i class="fas fa-user-shield"></i> Espace MOPILA
-        </button>
+      </button>
     </a>
-    </header>
-
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="fade-in"> Trouvez votre MOPILA à Brazzaville </h1>
-            <p class="fade-in delay-1">Service privé, rapide, fiable et sécurisé </p>
-        </div>
-    </section>
-
-
-    <section class="booking-section container my-10">
-  <h2 class="mb-4 text-center">Réservez votre MOPILA</h2>
-  <div class="row g-3">
-    <div class="col-md-5">
-      <label for="start" class="form-label">Point de départ</label>
-      <select id="start" class="form-select">
-        <option disabled selected value="">Sélectionnez un lieu</option>
-      </select>
+    <a href="login.html" target="_blank" rel="noopener noreferrer" style="text-decoration: none;">
+      <button class="driver-space-btn">
+        <i class="fas fa-user-shield"></i> Espace MOPILA
+      </button>
+    </a>
+  </header>
+  
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="fade-in">Trouvez votre MOPILA à Brazzaville</h1>
+      <p class="fade-in delay-1">Service privé, rapide, fiable et sécurisé</p>
     </div>
-    <div class="col-md-5">
-      <label for="end" class="form-label">Point d'arrivée</label>
-      <select id="end" class="form-select">
-        <option disabled selected value="">Sélectionnez un lieu</option>
-      </select>
-    </div>
-    <div class="col-md-3">
-      <label for="price" class="form-label">Prix estimé</label>
-      <input type="text" id="price" class="form-control" readonly />
-    </div>
-    <div class="col-md-3 d-flex align-items-end">
-     <button class="btn btn-primary w-100" onclick="openPopup()" disabled>Commander</button>
-    </div>
-  </div>
-</section>
+  </section>
 
+  <div id="notification-container" style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  max-width: 320px;
+  width: 90%;
+  pointer-events: none;
+"></div>
+
+  <section class="booking-section container my-5">
+    <h2 class="mb-4 text-center">Réservez votre MOPILA</h2>
+    <div class="row g-3">
+      <div class="form-group mb-3 autocomplete-container">
+        <label for="start">Départ</label>
+        <input type="text" id="start" name="start" class="form-control" placeholder="Adresse de départ" autocomplete="off" />
+        <div id="suggestions-start" class="suggestions d-none"></div>
+        <div id="error-start" class="text-danger small mt-1"></div>
+      </div>
+
+      <div class="form-group mb-3 autocomplete-container">
+        <label for="end">Arrivée</label>
+        <input type="text" id="end" name="end" class="form-control" placeholder="Adresse d'arrivée" autocomplete="off" />
+        <div id="suggestions-end" class="suggestions d-none"></div>
+        <div id="error-end" class="text-danger small mt-1"></div>
+      </div>
+
+      <div class="form-group mb-3">
+        <label for="price">Prix de la course </label>
+        <input type="text" id="price" name="price" class="form-control" readonly />
+      </div>
+
+      <button id="order-btn" class="btn btn-primary w-100" disabled>Commander</button>
+    </div>
+  </section>
 
   <div id="popup" class="popup-form" style="display: none;">
     <div class="popup-content bg-white p-4 rounded shadow">
       <h4 class="mb-3">Confirmer votre course</h4>
-      <input type="text" placeholder="Votre nom" class="form-control mb-2" id="clientName" />
-      <input type="tel" placeholder="Numéro de téléphone" class="form-control mb-3" id="clientPhone" />
+      <input
+        type="text"
+        placeholder="Votre nom"
+        class="form-control mb-2"
+        id="clientName"
+        autocomplete="name"
+      />
+      <input
+        type="tel"
+        placeholder="Numéro de téléphone"
+        class="form-control mb-3"
+        id="clientPhone"
+        autocomplete="tel"
+      />
       <button class="btn btn-success w-100 mb-2" onclick="submitOrder()">Valider</button>
       <button class="btn btn-outline-secondary w-100" onclick="closePopup()">Annuler</button>
     </div>
   </div>
 
-    <!-- About Section -->
-    <section id="about" class="about-section">
-        <div class="container">
-            <h2 class="section-title">À propos de MOPILA</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <h2>Votre solution de transport simple et rapide</h2>
-                    <p>MOPILA est la première plateforme de mise en relation entre chauffeurs et clients à Brazzaville et Pointe-Noire. Notre mission est de simplifier vos déplacements en vous connectant avec des chauffeurs professionnels en moins de 5 minutes.</p>
-                    
-                    <div class="stats">
-                        <div class="stat-item">
-                            <h3>20+</h3>
-                            <p>Chauffeurs partenaires</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>10K+</h3>
-                            <p>Courses effectuées</p>
-                        </div>
-                        <div class="stat-item">
-                            <h3>98%</h3>
-                            <p>Satisfaction clients</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1536139414673-1b479272ea38?q=80&w=1579&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D alt="Service MOPILA">
-                </div>
+  <section id="about" class="about-section py-5">
+    <div class="container">
+      <h2 class="section-title">À propos de MOPILA</h2>
+      <div class="about-content d-flex flex-wrap align-items-center">
+        <div class="about-text flex-grow-1 me-4">
+          <h2>Votre solution de transport simple et rapide</h2>
+          <p>
+            MOPILA est la première plateforme de mise en relation entre chauffeurs et clients à Brazzaville et Pointe-Noire.
+            Notre mission est de simplifier vos déplacements en vous connectant avec des chauffeurs professionnels en moins de 5 minutes.
+          </p>
+          <div class="stats d-flex gap-4 mt-4">
+            <div class="stat-item text-center">
+              <h3>20+</h3>
+              <p>Chauffeurs partenaires</p>
             </div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">Contactez-nous</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <h3>Nous sommes à votre écoute</h3>
-                    <p><i class="fas fa-map-marker-alt"></i> Brazzaville, République du Congo</p>
-                    <p><i class="fas fa-phone-alt"></i> +242 06 123 4567</p>
-                    <p><i class="fas fa-envelope"></i> contact@mopila.cg</p>
-                    <p><i class="fas fa-clock"></i> Lundi - Dimanche: 6h - 22h</p>
-                    
-                    <h3 style="margin-top: 2rem;">Suivez-nous</h3>
-                    <div class="social-links">
-                       
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        
-                    </div>
-                </div>
-                
+            <div class="stat-item text-center">
+              <h3>10K+</h3>
+              <p>Courses effectuées</p>
             </div>
+            <div class="stat-item text-center">
+              <h3>98%</h3>
+              <p>Satisfaction clients</p>
+            </div>
+          </div>
         </div>
-    </section>
+        <div class="about-image flex-shrink-0 mt-4 mt-md-0">
+          <img
+            src="https://images.unsplash.com/photo-1536139414673-1b479272ea38?q=80&w=1579&auto=format&fit=crop"
+            alt="Service MOPILA"
+            class="img-fluid rounded"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
 
   
 
-
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <img src="src/mopila-logo.png" alt="MOPILA Logo" style="height: 100px;">
-                    <p>MOPILA révolutionne les déplacements à Brazzaville et Pointe-Noire en connectant les utilisateurs à des chauffeurs professionnels en moins de 5 minutes.</p>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2026 <a href="https://magicandtech.netlify.app/">Magic and Tech</a>. Tous droits réservés.</p>
-            </div>
+  <section id="contact" class="contact-section py-5 bg-light">
+    <div class="container">
+      <h2 class="section-title">Contactez-nous</h2>
+      <div class="contact-content d-flex flex-column flex-md-row justify-content-between">
+        <div class="contact-info mb-4 mb-md-0">
+          <h3>Nous sommes à votre écoute</h3>
+          <p><i class="fas fa-map-marker-alt"></i> Brazzaville, République du Congo</p>
+          <p><i class="fas fa-phone-alt"></i> +242 06 123 4567</p>
+          <p><i class="fas fa-envelope"></i> contact@mopila.cg</p>
+          <p><i class="fas fa-clock"></i> Lundi - Dimanche: 6h - 22h</p>
+          <h3 class="mt-4">Suivez-nous</h3>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-instagram fa-2x"></i></a>
+          </div>
         </div>
-    </footer>
+      </div>
+    </div>
+  </section>
 
-    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-   <script src="https://unpkg.com/imagekit-javascript@1.8.5/dist/imagekit.min.js"></script>
-   <script  type="module" src="js/calculs.js"></script>
+  <footer class="bg-dark text-white py-4 mt-5">
+    <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+      <div class="footer-logo d-flex align-items-center gap-3">
+        <img src="src/mopila-logo.png" alt="MOPILA Logo" style="height: 100px" />
+        <p class="mb-0" style="max-width: 400px;">
+          MOPILA révolutionne les déplacements à Brazzaville et Pointe-Noire en connectant les utilisateurs à des chauffeurs professionnels en moins de 5 minutes.
+        </p>
+      </div>
+      <div class="footer-bottom mt-3 mt-md-0">
+        <p class="mb-0">&copy; 2026 <a href="https://magicandtech.netlify.app/" class="text-white text-decoration-none">Magic and Tech</a>. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
 
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/imagekit-javascript@1.8.5/dist/imagekit.min.js"></script>
+  <script type="module" src="js/calculs.js"></script>
 </body>
 </html>
