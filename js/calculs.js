@@ -1,5 +1,4 @@
-import { createOrder } from './orders.js';
-
+import { createOrder } from './order.js';
 const cache = {};
 const brazzavilleKeywords = [
   'makélékélé',
@@ -422,8 +421,10 @@ orderBtn.addEventListener('click', () => {
   const more = moreInput.value.trim();
 
   createOrderPopup({ start, end, price, more }, async ({ name, phone }) => {
+    // Popup de confirmation réussie
     showNotification(`Commande confirmée pour ${name}`, 'success', 4000);
 
+    // Envoi vers Supabase
     const result = await createOrder({
       start,
       end,
@@ -434,10 +435,16 @@ orderBtn.addEventListener('click', () => {
     });
 
     if (result.success) {
-      showNotification('✅ Commande enregistrée dans Supabase.', 'success', 5000);
-    } else {
-      showNotification('❌ Erreur : ' + result.error, 'error', 6000);
-    }
+  showNotification('✅ Votre commande a bien été enregistrée. Un chauffeur vous contactera bientôt.', 'success', 8000);
+
+  startInput.value = '';
+  endInput.value = '';
+  moreInput.value = '';
+  priceInput.value = '';
+} else {
+  showNotification('❌ Erreur lors de l’enregistrement : ' + result.error, 'error', 6000);
+}
+
   });
 });
 
