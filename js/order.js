@@ -1,28 +1,32 @@
 import { supabase } from '../Api/supabase.js';
 
 /**
- * @param {Object} orderData - The booking data to insert
- * @param {string} orderData.start - Departure location name
- * @param {string} orderData.end - Arrival location name
- * @param {string} orderData.price - Estimated price (e.g. "2000 FCFA")
- * @param {string} orderData.client - Client name
- * @param {string} orderData.phoneNumber - Client phone number
+ * Enregistre une commande dans la table Supabase "Orders".
+ *
+ * @param {Object} orderData - Les données de la commande à insérer
+ * @param {string} orderData.start - Lieu de départ
+ * @param {string} orderData.end - Lieu d'arrivée
+ * @param {string} orderData.more - Description supplémentaire
+ * @param {string} orderData.price - Prix estimé (ex: "2000 FCFA")
+ * @param {string} orderData.client - Nom du client
+ * @param {string} orderData.phoneNumber - Numéro de téléphone du client
  * @returns {Promise<{ success: boolean, error?: string }>}
  */
-export async function createOrder({ start, end, price, client, phoneNumber }) {
+export async function createOrder({ start, end, more, price, client, phoneNumber }) {
   const { error } = await supabase.from('Orders').insert([
     {
       Start: start,
       End: end,
+      Description: more,
       Price: price,
       Client: client,
       PhoneNumber: phoneNumber,
-      Statut: 'pinned', 
+      Statut: 'pinned',
     },
   ]);
 
   if (error) {
-    console.error('Failed to save order:', error.message);
+    console.error('[Supabase] Échec de l’enregistrement de la commande :', error.message);
     return { success: false, error: error.message };
   }
 

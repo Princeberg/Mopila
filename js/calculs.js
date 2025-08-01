@@ -1,4 +1,4 @@
-// === calculs.js ===
+import { createOrder } from './orders.js';
 
 const cache = {};
 const brazzavilleKeywords = [
@@ -115,7 +115,7 @@ async function geocode(address) {
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371; // km
+  const R = 6371; 
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -219,7 +219,12 @@ function attachAutocomplete(inputEl, suggestionsEl, errorEl) {
 
 
 
-function createOrderPopup({ start, end, price }, onConfirm) {
+// ... [Garde intact tout le haut du fichier jusqu'à la fin du bloc attachAutocomplete(...)] ...
+
+// ... AUTOCOMPLETE ALREADY PRESENT ...
+// ... CONTINUE FROM createOrderPopup with `more` included and POST logic ...
+
+function createOrderPopup({ start, end, price, more }, onConfirm) {
   const overlay = document.createElement('div');
   overlay.id = 'order-popup-overlay';
   overlay.style.position = 'fixed';
@@ -249,11 +254,11 @@ function createOrderPopup({ start, end, price }, onConfirm) {
   title.style.fontWeight = '700';
   title.style.color = '#000';
 
-  // === Ajout des infos trajet et prix ===
   const summary = document.createElement('div');
   summary.innerHTML = `
     <p style="margin: 0 0 10px;"><strong>Départ :</strong> ${start}</p>
     <p style="margin: 0 0 10px;"><strong>Arrivée :</strong> ${end}</p>
+    <p style="margin: 0 0 10px;"><strong>Description :</strong> ${more || 'Aucune'}</p>
     <p style="margin: 0 0 20px;"><strong>Prix :</strong> ${price}</p>
   `;
   summary.style.fontSize = '15px';
@@ -324,7 +329,7 @@ function createOrderPopup({ start, end, price }, onConfirm) {
   });
 
   popup.appendChild(title);
-  popup.appendChild(summary); // ✨ Infos Départ / Arrivée / Prix
+  popup.appendChild(summary);
   popup.appendChild(inputName);
   popup.appendChild(inputPhone);
   popup.appendChild(btnConfirm);
@@ -340,7 +345,7 @@ function createOrderPopup({ start, end, price }, onConfirm) {
 }
 
 
-
+// === NOTIFICATIONS ===
 const notificationContainer = document.getElementById('notification-container');
 
 function showNotification(message, type = 'success', duration = 4000) {
@@ -361,8 +366,10 @@ function showNotification(message, type = 'success', duration = 4000) {
 }
 
 
+// === GESTION DES ÉVÉNEMENTS ===
 const startInput = document.getElementById('start');
 const endInput = document.getElementById('end');
+const moreInput = document.getElementById('more');
 const priceInput = document.getElementById('price');
 const orderBtn = document.getElementById('order-btn');
 const errorStart = document.getElementById('error-start');
@@ -408,24 +415,31 @@ async function onInputChange() {
 startInput.addEventListener('change', onInputChange);
 endInput.addEventListener('change', onInputChange);
 
-
 orderBtn.addEventListener('click', () => {
   const start = startInput.value.trim();
   const end = endInput.value.trim();
   const price = priceInput.value.trim();
+  const more = moreInput.value.trim();
 
-  createOrderPopup(
-    { start, end, price },
-    ({ name, phone }) => {
-      showNotification(`Commande confirmée pour ${name}, téléphone ${phone}`, 'success', 6000);
-      console.log('Commande:', {
-        start,
-        end,
-        price,
-        clientName: name,
-        clientPhone: phone,
-      });
+  createOrderPopup({ start, end, price, more }, async ({ name, phone }) => {
+    showNotification(`Commande confirmée pour ${name}`, 'success', 4000);
+
+    const result = await createOrder({
+      start,
+      end,
+      more,
+      price,
+      client: name,
+      phoneNumber: phone,
+    });
+
+    if (result.success) {
+      showNotification('✅ Commande enregistrée dans Supabase.', 'success', 5000);
+    } else {
+      showNotification('❌ Erreur : ' + result.error, 'error', 6000);
     }
-  );
+  });
 });
+
+
 
