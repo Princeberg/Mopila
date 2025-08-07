@@ -1316,3 +1316,40 @@ button:disabled {
     .hero p {
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
     }
+#install-btn {
+  margin: 1.5rem auto 0 auto;
+  background-color: #333333;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(0, 200, 83, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: none;
+  width: 350px;
+  max-width: 90%;
+  text-align: center;
+}
+
+#install-btn:hover {
+  background-color: #00b34a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 200, 83, 0.4);
+}
+
+#install-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(0, 200, 83, 0.3);
+}
+
+@media (max-width: 480px) {
+  #install-btn {
+    font-size: 0.95rem;
+    padding: 0.65rem 1.2rem;
+    width: 90%;
+    min-width: 200px;
+  }
+}

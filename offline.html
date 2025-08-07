@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hors ligne - MOPILA</title>
+   <link rel="icon" href="src/mopila-logo.png" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js" defer></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    
+      color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-direction: column;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    .offline-card {
+
+      padding: 2rem;
+      border-radius: 16px;
+
+      max-width: 400px;
+      width: 90%;
+      animation: slideUp 0.7s ease;
+    }
+
+    .lottie-container {
+      width: 180px;
+      margin: 0 auto 20px;
+    }
+
+    h1 {
+      font-size: 1.7rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #555;
+    }
+
+    .offline-popup {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #ff4d4f;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      animation: popupIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes popupIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #121212;
+        color: #eee;
+      }
+
+      .offline-card {
+        background: #1e1e1e;
+        color: #eee;
+      }
+
+      .offline-popup {
+        background-color: #d9534f;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-card">
+    <div class="lottie-container" id="lottie-animation"></div>
+    <h1>🌐 Vous êtes hors ligne</h1>
+    <p>Cette page n'est pas disponible actuellement.<br />Veuillez vérifier votre connexion Internet.</p>
+  </div>
+
+  <div class="offline-popup">📡 Connexion perdue</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const animationContainer = document.getElementById("lottie-animation");
+
+      if (window.lottie && animationContainer) {
+        lottie.loadAnimation({
+          container: animationContainer,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: 'lotties/off.json' 
+        });
+      }
+    });
+  </script>
+</body>
+</html>
