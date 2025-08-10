@@ -1,62 +1,105 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="icon" type="image/x-icon" href="src/mopila-logo.png">  
-    <title> Demande MOPILA</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="css/login.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/x-icon" href="src/mopila-logo.png" />
+    <title>Demande MOPILA</title>
+
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- FontAwesome CDN -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="css/login.css" />
+    <link rel="stylesheet" href="css/index.css" />
 </head>
 <body>
+
+    <!-- Header -->
+  <header>
+  <div class="logo-container">
+    <img src="src/mopila-logo.png" alt="MOPILA Logo" class="logo-img">
+    <span class="app-title"></span>
+  </div>
+  <nav class="header-buttons">
+    <a href="index.html" class="header-icon" title="Accueil">
+      <i class="fas fa-home"></i>
+    </a>
+    <a href="demande.html" class="header-icon" title="Devenir MOPILA">
+      <i class="fas fa-car"></i>
+    </a>
+    <a href="login.html" target="_blank" rel="noopener noreferrer" class="header-icon" title="Espace MOPILA">
+      <i class="fas fa-user-shield"></i>
+    </a>
+  </nav>
+</header>
+
     <div class="login-container">
         <div class="login-header">
             <a href="index.html">
-           <img src="src/mopila-logo.png" width="80px">
-           </a>
-
-            <h1> Nouveau MOPILA </h1>
-            <p> Merci de remplir ces informations pour finaliser votre demande. </p>
+                <img src="src/mopila-logo.png" width="80" alt="Logo MOPILA" />
+            </a>
+            <h1>Nouveau MOPILA</h1>
+            <p>Merci de remplir ces informations pour finaliser votre demande.</p>
         </div>
-        
+
         <form id="RegisterForm" class="register-form">
+            <div class="form-group">
+                <label for="fullName">Nom(s) et Prénom(s) *</label>
+                <input
+                  type="text"
+                  id="fullName"
+                  placeholder="Ex: Marie-Ange Diop"
+                  required
+                />
+            </div>
 
-    <div class="form-group">
-        <label for="fullName">Nom(s) et Prénom(s) *</label>
-        <input type="text" id="fullName" placeholder="Ex: Marie-Ange Diop" required>
+            <div class="form-group">
+                <label for="age">Âge actuel *</label>
+                <input
+                  type="number"
+                  id="age"
+                  min="18"
+                  max="99"
+                  placeholder="Ex: 32 ans"
+                  required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="city">Ville de résidence *</label>
+                <select id="city" required>
+                    <option value="">-- Choisissez une ville --</option>
+                    <option value="Brazzaville">Brazzaville</option>
+                    <option value="Pointe-Noire">Pointe-Noire</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="whatsapp">Contact WhatsApp *</label>
+                <div class="phone-input">
+                    <select id="countryCode">
+                        <option value="+242">CG +242</option>
+                    </select>
+                    <input
+                      type="tel"
+                      id="whatsapp"
+                      placeholder="Ex: 77 123 45 67"
+                      required
+                    />
+                </div>
+            </div>
+
+            <button type="submit" class="login-btn">
+                <i class="fas fa-paper-plane"></i> Soumettre ma demande
+            </button>
+        </form>
     </div>
-    
-    <div class="form-group">
-        <label for="age">Âge actuel *</label>
-        <input type="number" id="age" min="18" max="99" placeholder="Ex: 32 ans" required>
-    </div>
-    
-   <div class="form-group">
-    <label for="city">Ville de résidence *</label>
-    <select id="city" required>
-        <option value="">-- Choisissez une ville --</option>
-        <option value="Brazzaville">Brazzaville</option>
-        <option value="Pointe-Noire">Pointe-Noire</option>
-    </select>
-   </div>
-    
-    <div class="form-group">
-        <label for="whatsapp">Contact WhatsApp *</label>
-        <div class="phone-input">
-            <select id="countryCode">
-                <option value="+242">CG +242</option>
-                <!-- <option value="+33">FR +33</option>
-                <option value="+1">US +1</option> -->
-            </select>
-            <input type="tel" id="whatsapp" placeholder="Ex: 77 123 45 67" required>
-        </div>
-    </div>
-    
-    <button type="submit" class="login-btn">
-        <i class="fas fa-paper-plane"></i> Soumettre ma demande
-    </button>
-</form>
-    </div>
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
      <script src="Api/supabase.js"></script>
     <script  src="js/demande.js"></script>

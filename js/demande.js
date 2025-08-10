@@ -133,3 +133,44 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+   const form = document.getElementById("RegisterForm");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const fullName = document.getElementById("fullName").value.trim();
+        const age = parseInt(document.getElementById("age").value);
+        const city = document.getElementById("city").value;
+        const countryCode = document.getElementById("countryCode").value;
+        const whatsapp = document.getElementById("whatsapp").value.trim();
+
+        // Validation basique (déjà en required dans HTML)
+        if (!fullName || !age || !city || !whatsapp) {
+          alert("Merci de remplir tous les champs obligatoires.");
+          return;
+        }
+
+        // Format complet du WhatsApp
+        const whatsappFull = `${countryCode}${whatsapp.replace(/\s+/g, "")}`;
+
+        try {
+          // Par exemple insertion dans une table "demandes" Supabase
+          const { data, error } = await supabase
+            .from("demandes")
+            .insert([
+              {
+                full_name: fullName,
+                age: age,
+                city: city,
+                whatsapp: whatsappFull,
+              },
+            ]);
+
+          if (error) throw error;
+
+          alert("Demande envoyée avec succès !");
+          form.reset();
+        } catch (error) {
+          alert("Erreur lors de l'envoi : " + error.message);
+        }
+      });

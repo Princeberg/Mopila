@@ -50,6 +50,7 @@ body {
     box-shadow: var(--shadow);
     width: 100%;
     max-width: 450px;
+    margin-top: 50px;
     padding: 40px 30px;
     text-align: center;
     border: 1px solid var(--uber-light-gray);
@@ -135,7 +136,7 @@ body {
 .login-btn {
     width: 100%;
     padding: 15px;
-    background: var(--uber-black);
+    background: #16213e;
     color: var(--uber-white);
     border: none;
     border-radius: 8px;
@@ -473,3 +474,32 @@ body {
     width: 100px;
 }
 
+/* Toast notifications */
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 16px;
+  position: fixed;
+  z-index: 9999;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+.toast.show {
+  visibility: visible;
+  opacity: 1;
+}
+.toast.success {
+  background-color: #4BB543; /* vert */
+}
+.toast.error {
+  background-color: #FF3333; /* rouge */
+}

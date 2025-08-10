@@ -6,12 +6,131 @@
     <link rel="icon" type="image/x-icon" href="src/mopila-logo.png" />
     <title>Connexion MOPILA</title>
     <link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-/>
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="css/index.css"
+    />
+    <link rel="manifest" href="manifest.json">
 
-    <link rel="stylesheet" href="css/login.css" />
+    <style>
+      /* Reset & basics */
+      * {
+        box-sizing: border-box;
+      }
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: Arial, sans-serif;
+        background: #f5f5f5;
+      }
+
+      /* Container fills viewport and centers content */
+      .login-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;  /* vertical center */
+        align-items: center;      /* horizontal center */
+        height: 100vh;
+        padding: 20px;
+      }
+
+      /* Card style */
+      .login-container > div, 
+      form.login-form {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        padding: 30px 40px;
+        width: 100%;
+        max-width: 400px;
+      }
+
+      .login-header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      .login-header img {
+        margin-bottom: 10px;
+      }
+      .login-header h1 {
+        margin: 0 0 8px;
+        font-weight: 700;
+        color: #333;
+      }
+      .login-header p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #444;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 1rem;
+        border: 1.5px solid #ccc;
+        border-radius: 5px;
+        transition: border-color 0.3s ease;
+      }
+      input[type="text"]:focus {
+        border-color: #16213e;
+        outline: none;
+      }
+
+      button.login-btn {
+        width: 100%;
+        padding: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        background-color: #16213e;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button.login-btn:hover {
+        background-color: #16213e;
+      }
+
+      .phone-input {
+        display: flex;
+        align-items: center;
+      }
+    </style>
 </head>
+
+ <!-- Header -->
+  <header>
+  <div class="logo-container">
+    <img src="src/mopila-logo.png" alt="MOPILA Logo" class="logo-img">
+    <span class="app-title"></span>
+  </div>
+  <nav class="header-buttons">
+    <a href="index.html" class="header-icon" title="Accueil">
+      <i class="fas fa-home"></i>
+    </a>
+    <a href="demande.html" class="header-icon" title="Devenir MOPILA">
+      <i class="fas fa-car"></i>
+    </a>
+    <a href="login.html" target="_blank" rel="noopener noreferrer" class="header-icon" title="Espace MOPILA">
+      <i class="fas fa-user-shield"></i>
+    </a>
+  </nav>
+</header>
+
 <body>
     <div class="login-container">
         <div class="login-header">
@@ -27,14 +146,13 @@
                 <label for="accountNumber">Numéro de compte</label>
                 <div class="phone-input">
                     <input
-  type="text"
-  id="accountNumber"
-  name="accountNumber"
-  placeholder="Ex: ABC1234"
-  required
-  autocomplete="off"
-/>
-
+                      type="text"
+                      id="accountNumber"
+                      name="accountNumber"
+                      placeholder="Ex: ABC1234"
+                      required
+                      autocomplete="off"
+                    />
                 </div>
             </div>
 
@@ -43,6 +161,7 @@
             </button>
         </form>
     </div>
+
     <script type="module" src="js/login.js"></script>
 </body>
 </html>
