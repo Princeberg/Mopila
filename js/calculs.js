@@ -258,7 +258,7 @@ function createOrderPopup({ start, end, price, more }, onConfirm) {
     <p style="margin: 0 0 10px;"><strong>Départ :</strong> ${start}</p>
     <p style="margin: 0 0 10px;"><strong>Arrivée :</strong> ${end}</p>
     <p style="margin: 0 0 10px;"><strong>Description :</strong> ${more || 'Aucune'}</p>
-    <p style="margin: 0 0 20px;"><strong>Prix :</strong> ${price}</p>
+    <p style="margin: 0 0 20px;"><strong>Estimation du prix :</strong> ${price}</p>
   `;
   summary.style.fontSize = '15px';
   summary.style.color = '#333';
