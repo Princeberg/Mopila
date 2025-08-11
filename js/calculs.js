@@ -1,4 +1,5 @@
-import { createOrder } from './order.js';
+import L from 'leaflet';
+
 const cache = {};
 const brazzavilleKeywords = [
   'makélékélé',
@@ -11,6 +12,7 @@ const brazzavilleKeywords = [
   'djiri',
   'kintélé'
 ];
+
 function cleanString(str) {
   return (str || '').toLowerCase().trim();
 }
@@ -22,10 +24,9 @@ function isInBrazzaville(place) {
   const district = cleanString(props.district || props.suburb || props.neighbourhood);
   const country = cleanString(props.country || '');
 
-  if ([city, state, district, country].some(val => brazzavilleKeywords.some(k => val.includes(k)))) {
-    return true;
-  }
-  return false;
+  return [city, state, district, country].some(val =>
+    brazzavilleKeywords.some(k => val.includes(k))
+  );
 }
 
 function cleanQuery(input) {
@@ -87,8 +88,7 @@ async function suggest(inputValue) {
     const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=7&lang=fr`;
     const res = await fetch(url);
     const json = await res.json();
-    const features = (json.features || [])
-      .filter(isInBrazzaville); 
+    const features = (json.features || []).filter(isInBrazzaville);
 
     cache[query] = features;
     saveCache(query, features);
@@ -113,6 +113,7 @@ async function geocode(address) {
   };
 }
 
+// Calcul distance à vol d'oiseau (en km)
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; 
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -136,7 +137,28 @@ function calculatePrice(distanceKm) {
   return roundToNextHundred(baseFare + distanceKm * pricePerKm);
 }
 
-async function updatePriceFromAddresses(startAddress, endAddress) {
+// Récupérer itinéraire OSRM avec durée et tracé
+async function getRoute(start, end) {
+  const url = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=geojson`;
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json.code !== 'Ok' || !json.routes || json.routes.length === 0) {
+      return null;
+    }
+    const route = json.routes[0];
+    return {
+      duration: route.duration, // en secondes
+      distance: route.distance, // en mètres
+      geometry: route.geometry, // GeoJSON LineString
+    };
+  } catch (e) {
+    console.error('Erreur OSRM:', e);
+    return null;
+  }
+}
+
+async function updatePriceAndRouteFromAddresses(startAddress, endAddress) {
   if (!startAddress || !endAddress) return { price: 0, error: 'Champs manquants' };
 
   const start = await geocode(startAddress);
@@ -145,76 +167,95 @@ async function updatePriceFromAddresses(startAddress, endAddress) {
   const end = await geocode(endAddress);
   if (!end) return { price: 0, error: `Lieu d'arrivée "${endAddress}" non trouvé ou hors Brazzaville.` };
 
-  const distance = calculateDistance(start.lat, start.lon, end.lat, end.lon);
-  if (distance <= 0) return { price: 0, error: 'Distance non valide' };
+  const route = await getRoute(start, end);
+  if (!route) return { price: 0, error: 'Impossible de calculer l’itinéraire.' };
 
-  return { price: calculatePrice(distance), distance };
-}
+  const distanceKm = route.distance / 1000;
+  const durationMin = route.duration / 60;
 
-function debounce(func, wait) {
-  let timeout;
-  return function (...args) {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
+  if (distanceKm <= 0) return { price: 0, error: 'Distance non valide' };
+
+  return {
+    price: calculatePrice(distanceKm),
+    distance: distanceKm,
+    duration: durationMin,
+    geometry: route.geometry,
+    start,
+    end
   };
 }
 
-function attachAutocomplete(inputEl, suggestionsEl, errorEl) {
-  inputEl.addEventListener(
-    'input',
-    debounce(async () => {
-      const val = inputEl.value.trim();
-      if (val.length < 3) {
-        suggestionsEl.innerHTML = '';
-        suggestionsEl.classList.add('d-none');
-        return;
-      }
+// --- Leaflet carte et tracé
 
-      const features = await suggest(val);
+let map;
+let routeLayer;
 
-      // Filtrer doublons par label
-      const seenLabels = new Set();
-      const uniqueFeatures = features.filter(feature => {
-        const label = formatDisplayName(feature);
-        if (seenLabels.has(label)) return false;
-        seenLabels.add(label);
-        return true;
-      });
+function initMap(containerId = 'map') {
+  if (map) return map; // init une seule fois
+  map = L.map(containerId).setView([-4.269, 15.284], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+  return map;
+}
 
-      suggestionsEl.innerHTML = '';
-      if (uniqueFeatures.length === 0) {
-        errorEl.textContent = 'Aucun résultat trouvé à Brazzaville';
-        suggestionsEl.classList.add('d-none');
-        return;
-      }
+function drawRouteOnMap(geometry) {
+  if (routeLayer) {
+    map.removeLayer(routeLayer);
+  }
+  routeLayer = L.geoJSON(geometry, { style: { color: 'blue', weight: 5 } }).addTo(map);
+  map.fitBounds(routeLayer.getBounds());
+}
 
-      errorEl.textContent = '';
-      uniqueFeatures.forEach((feature) => {
-        const label = formatDisplayName(feature);
-        const div = document.createElement('div');
-        div.textContent = label;
-        div.tabIndex = 0;
-        div.className = 'suggestion-item p-2';
-        div.style.cursor = 'pointer';
-        div.addEventListener('click', () => {
-          inputEl.value = label;
-          suggestionsEl.innerHTML = '';
-          suggestionsEl.classList.add('d-none');
-          inputEl.dispatchEvent(new Event('change'));
-        });
-        suggestionsEl.appendChild(div);
-      });
+// Mise à jour UI (DOM) des infos tarif, distance, durée et tracé carte
+async function onAddressesChanged(startAddress, endAddress) {
+  const map = initMap('map');
+  const result = await updatePriceAndRouteFromAddresses(startAddress, endAddress);
 
-      suggestionsEl.classList.remove('d-none');
-    }, 300)
-  );
+  const routeInfoSection = document.getElementById('route-info');
+  const priceInfo = document.getElementById('price-info');
+  const distanceInfo = document.getElementById('distance-info');
+  const durationInfo = document.getElementById('duration-info');
 
-  inputEl.addEventListener('blur', () => {
-    setTimeout(() => {
-      suggestionsEl.classList.add('d-none');
-    }, 200);
+  if (result.error) {
+    routeInfoSection.classList.add('d-none');
+    alert(result.error);
+    return;
+  }
+
+  priceInfo.textContent = `Prix estimé : ${result.price} FCFA`;
+  distanceInfo.textContent = `Distance : ${result.distance.toFixed(2)} km`;
+  durationInfo.textContent = `Durée approximative : ${result.duration.toFixed(1)} min`;
+  routeInfoSection.classList.remove('d-none');
+
+  drawRouteOnMap(result.geometry);
+}
+
+// Fonction pratique pour attacher autocomplétion et écoute sur inputs (exemple)
+function attachAutocomplete(startInput, endInput) {
+  startInput.addEventListener('input', () => {
+    if (startInput.value.trim() && endInput.value.trim()) {
+      onAddressesChanged(startInput.value.trim(), endInput.value.trim());
+    }
+  });
+  endInput.addEventListener('input', () => {
+    if (startInput.value.trim() && endInput.value.trim()) {
+      onAddressesChanged(startInput.value.trim(), endInput.value.trim());
+    }
   });
 }
+
+export {
+  suggest,
+  geocode,
+  updatePriceAndRouteFromAddresses,
+  initMap,
+  drawRouteOnMap,
+  onAddressesChanged,
+  attachAutocomplete
+};
+
+
 
 
 

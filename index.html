@@ -1,107 +1,129 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000000" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="MOPILA" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-   <link rel="icon" type="image/x-icon" href="src/mopila-logo.png" />
-  <link rel="stylesheet" href="css/index.css" />
+  <link rel="icon" type="image/x-icon" href="src/mopila-logo.png" />
   
   <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet" />
   
   <!-- Styles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+  <link rel="stylesheet" href="css/index.css" />
   
   <title>MOPILA</title>
-  <link rel="manifest" href="manifest.json">
-  
-  <style>
-  
-  </style>
+  <link rel="manifest" href="manifest.json" />
 </head>
 
 <body>
   <!-- Header -->
-<header>
-  <div class="logo-container">
-    <img src="src/mopila-logo.png" alt="MOPILA Logo" class="logo-img">
-    <span class="app-title"></span>
-  </div>
-  <nav class="header-buttons">
-    <a href="contact.html" class="header-icon" title="Nos contacts">
-      <i class="fas fa-phone"></i>
-    </a>
-    <a href="demande.html" class="header-icon" title="Devenir MOPILA">
-      <i class="fas fa-car"></i>
-    </a>
-    <a href="login.html" target="_blank" rel="noopener noreferrer" class="header-icon" title="Espace MOPILA">
-      <i class="fas fa-user-shield"></i>
-    </a>
-  </nav>
-</header>
-  
-  <!-- Hero Section -->
-  <!-- <section class="hero">
-    <div class="hero-content">
-      <h1>Votre chauffeur privé en quelques minutes</h1>
-      <p>Service rapide, fiable et sécurisé à Brazzaville</p>
+  <header>
+    <div class="logo-container">
+      <img src="src/mopila-logo.png" alt="Logo MOPILA" class="logo-img" />
+      <span class="app-title" aria-label="Nom de l'application">MOPILA</span>
     </div>
-  </section> -->
+    <nav class="header-buttons" aria-label="Menu principal">
+      <a href="contact.html" class="header-icon" title="Nos contacts" aria-label="Nos contacts">
+        <i class="fas fa-phone" aria-hidden="true"></i>
+      </a>
+      <a href="demande.html" class="header-icon" title="Devenir MOPILA" aria-label="Devenir MOPILA">
+        <i class="fas fa-car" aria-hidden="true"></i>
+      </a>
+      <a
+        href="login.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="header-icon"
+        title="Espace MOPILA"
+        aria-label="Espace MOPILA"
+      >
+        <i class="fas fa-user-shield" aria-hidden="true"></i>
+      </a>
+    </nav>
+  </header>
 
-  <!-- Booking Section -->
+  <!-- Main Booking Section -->
   <main class="main-content">
-    <section class="booking-section">
-      <h2>Où allez-vous ?</h2>
-      
+    <section class="booking-section" aria-labelledby="booking-title">
+      <h2 id="booking-title">Où allez-vous ?</h2>
+
       <div class="form-group autocomplete-container">
         <label for="start">Point de départ</label>
         <div style="position: relative;">
-          <i class="fas fa-map-marker-alt location-icon"></i>
-          <input type="text" id="start" name="start" class="form-control input-with-icon" 
-                 placeholder="Adresse de départ" autocomplete="off">
+          <i class="fas fa-map-marker-alt location-icon" aria-hidden="true"></i>
+          <input
+            type="text"
+            id="start"
+            name="start"
+            class="form-control input-with-icon"
+            placeholder="Adresse de départ"
+            autocomplete="off"
+            aria-describedby="error-start"
+            required
+          />
         </div>
-        <div id="suggestions-start" class="suggestions d-none"></div>
-        <div id="error-start" class="text-danger small mt-1"></div>
+        <div id="suggestions-start" class="suggestions d-none" role="listbox" aria-label="Suggestions point de départ"></div>
+        <div id="error-start" class="text-danger small mt-1" role="alert" aria-live="polite"></div>
       </div>
 
       <div class="form-group autocomplete-container">
         <label for="end">Destination</label>
         <div style="position: relative;">
-          <i class="fas fa-flag-checkered location-icon"></i>
-          <input type="text" id="end" name="end" class="form-control input-with-icon" 
-                 placeholder="Adresse d'arrivée" autocomplete="off">
+          <i class="fas fa-flag-checkered location-icon" aria-hidden="true"></i>
+          <input
+            type="text"
+            id="end"
+            name="end"
+            class="form-control input-with-icon"
+            placeholder="Adresse d'arrivée"
+            autocomplete="off"
+            aria-describedby="error-end"
+            required
+          />
         </div>
-        <div id="suggestions-end" class="suggestions d-none"></div>
-        <div id="error-end" class="text-danger small mt-1"></div>
+        <div id="suggestions-end" class="suggestions d-none" role="listbox" aria-label="Suggestions destination"></div>
+        <div id="error-end" class="text-danger small mt-1" role="alert" aria-live="polite"></div>
       </div>
 
-      <div class="form-group">
-        <label for="more">Informations supplémentaires (optionnel)</label>
-        <textarea id="more" name="more" class="form-control" 
-                  placeholder="Détails sur le lieu de prise en charge..." 
-                  rows="2"></textarea>
-      </div>
+      <section id="route-info" class="route-info d-none">
+  <h3>Infos Trajet</h3>
+  <p id="price-info"></p>
+  <p id="distance-info"></p>
+  <p id="duration-info"></p>
+  <div id="map" style="height: 300px;"></div>
+</section>
 
-      <button id="order-btn" class="btn btn-primary" disabled>
-        <i class="fas fa-car-side"></i> COMMANDER UN MOPILA
+      <button id="order-btn" class="btn btn-primary" disabled aria-disabled="true" type="button">
+        <i class="fas fa-car-side" aria-hidden="true"></i> COMMANDER UN MOPILA
       </button>
     </section>
   </main>
 
+  <section id="route-info" class="route-info d-none">
+  <h3>Informations sur votre trajet</h3>
+  <p id="distance"></p>
+  <p id="duration"></p>
+  <div id="map" style="width: 100%; height: 300px;"></div> <!-- si tu utilises une carte -->
+</section>
 
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // Animation for page elements
-    document.addEventListener('DOMContentLoaded', function() {
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script defer>
+    document.addEventListener('DOMContentLoaded', function () {
       const elements = document.querySelectorAll('.hero-content, .booking-section');
       elements.forEach((el, index) => {
         setTimeout(() => {
@@ -109,28 +131,42 @@
           el.style.transform = 'translateY(0)';
         }, index * 200);
       });
-      
-      // Initialize elements with hidden state
-      elements.forEach(el => {
+
+      elements.forEach((el) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
       });
+
+      // Enable order button only when both start and end are filled
+      const startInput = document.getElementById('start');
+      const endInput = document.getElementById('end');
+      const orderBtn = document.getElementById('order-btn');
+
+      function validateInputs() {
+        const valid = startInput.value.trim().length >= 3 && endInput.value.trim().length >= 3;
+        orderBtn.disabled = !valid;
+        orderBtn.setAttribute('aria-disabled', !valid);
+      }
+
+      startInput.addEventListener('input', validateInputs);
+      endInput.addEventListener('input', validateInputs);
     });
-    
+
     // Function to show notification
     function showNotification(message, type = 'info') {
       const notification = document.createElement('div');
       notification.className = `notification ${type}`;
       notification.innerHTML = message;
       document.body.appendChild(notification);
-      
+
       setTimeout(() => {
         notification.remove();
       }, 3000);
     }
   </script>
-  <script type="module" src="js/calculs.js"></script>
-  <script src="js/app.js"></script>
+
+  <script type="module" src="js/calculs.js" defer></script>
+  <script src="js/app.js" defer></script>
 </body>
 </html>
