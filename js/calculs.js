@@ -1,4 +1,5 @@
 import L from 'leaflet';
+import { createOrder } from './order.js';
 
 const cache = {};
 const brazzavilleKeywords = [
@@ -254,10 +255,6 @@ export {
   onAddressesChanged,
   attachAutocomplete
 };
-
-
-
-
 
 // ... [Garde intact tout le haut du fichier jusqu'à la fin du bloc attachAutocomplete(...)] ...
 
